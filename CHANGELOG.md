@@ -1,5 +1,18 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.2.2] — 2026-04-20
+
+### Changed
+- `docs/PLAN-v1.0.md` 거버넌스 섹션 재편 — **1인 운영 · 로컬 우선** 운영 모델 반영
+  - Executive Summary 에 "운영 모델" 서브섹션 신설 (1인 운영 / local-first / GitHub = 백업 / fast iteration loop)
+  - §9.4 "Issue 라벨 컨벤션" → "개발 플로우 (로컬 우선)" 로 대체: main 직접 커밋 / PR 없음 / issue tracker 미사용
+  - §9.5 신설: 외부 adopter 발생 시 거버넌스 전환 조건 (adopter ≥ 1 / stars ≥ 10 / v1.0 GA)
+  - §6.2 성공 KPI 를 Tier 1 (1인 운영 필수) + Tier 2 (외부 adopter 시 추가) 로 분리
+
+### Notes
+- 운영 철학 명문화: "필요가 발견되면 로컬 clone 에서 그 자리에서 fix → push (백업) → 즉시 사용" 의 fast iteration 을 격식보다 우선
+- v0.3.0 착수 계획은 불변
+
 ## [0.2.1] — 2026-04-20
 
 ### Added

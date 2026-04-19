@@ -15,11 +15,20 @@
 
 본 플랜은 플러그인을 **base 프레임워크 + 프로젝트 커스터마이징 레이어** 2단 구조로 재편하여, `/plugin update` 실행 시에도 프로젝트 고유 설정이 유실되지 않는 **upgrade-safe 아키텍처**를 달성하는 것을 목표로 한다.
 
+### 운영 모델 (중요)
+
+- **1인 운영 프로젝트** — 소유자(@JangMinSeok) 단독 개발·사용
+- **로컬 우선(local-first)** — 로컬 체크아웃에서 수정 → 즉시 사용 → 검증 → GitHub push
+- **GitHub 은 백업** — main 에 직접 커밋·push. PR / issue tracker / 브랜치 전략은 현시점 비적용
+- **Fast iteration loop** — 로컬 사용 중 필요가 발생하면 그 자리에서 개선하여 바로 쓴다 (격식보다 속도)
+- GitHub issue 기반 관리는 **외부 adopter 가 생기거나 v1.0 GA 시점에 재검토** (§9 참조)
+
 ### 핵심 가치
 
 1. **하나의 기본 틀, 자유로운 확장** — 플러그인은 범용 뼈대만 제공, 프로젝트는 `.harness/overrides/` 로 덮어씀
 2. **업그레이드 안전성** — 플러그인 버전 bump 가 프로젝트 커스터마이징을 파손하지 않음
 3. **구조적 투명성** — 무엇이 base 이고 무엇이 프로젝트 고유인지 세션 시작 시 즉시 확인 가능
+4. **즉시 가용성** — 필요가 발견되면 로컬 clone 에서 fix → push 까지 하나의 iteration 으로 처리 (대기·심사 없음)
 
 ---
 
@@ -297,10 +306,14 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 
 ### 6.2 성공 KPI (v1.0.0 진입 조건)
 
+**Tier 1 — 필수 (1인 운영 기준)**:
 - ✅ Zero-fork 달성: TSGroup Portal Hub 프로젝트가 plugin fork 없이 BL-023/BL-029 예시 커스터마이징 완료
-- ✅ 3개 이상 외부 프로젝트가 plugin 을 override 로 사용 (다양성 확보)
 - ✅ `/plugin update harness` 실행 후 프로젝트 커스터마이징 유실 사례 0건
-- ✅ Issue tracker 에 "커스터마이징이 안 된다" 유형 이슈 최근 30일간 0건
+- ✅ 본인이 관리하는 3개 이상 서로 다른 프로젝트에서 override 로 정상 동작 (다양성 내재 검증)
+
+**Tier 2 — 외부 adopter 발생 시 추가 적용** (§9.5 조건 충족 후):
+- ✅ 외부 사용자 ≥ 1명 확인 + "커스터마이징이 안 된다" 유형 이슈 30일간 0건
+- ✅ v1.0 API stable lock-in 선언 + 향후 breaking change 는 major bump 로만 허용
 
 ---
 
@@ -343,7 +356,7 @@ $EDITOR .harness/overrides/agents/planner.md
 
 ---
 
-## 9. 거버넌스
+## 9. 거버넌스 (1인 운영 · 로컬 우선)
 
 ### 9.1 본 플랜 문서 관리 규칙
 
@@ -357,6 +370,7 @@ $EDITOR .harness/overrides/agents/planner.md
 - **patch (0.x.y)**: 문서 수정, 버그 수정, non-breaking 내부 리팩터링
 - **minor (0.x.0)**: 새 phase 완료, 새 userConfig 키 추가, 새 override 타입 지원
 - **major (x.0.0)**: L1/L2/L3 스키마 변경 등 파괴적 변경. v1.0.0 이후로 예약
+- 연속된 문서 수정이 하루 안에 여러 번 있을 경우 **마지막 patch 에 통합** 하여 bump 노이즈를 줄인다
 
 ### 9.3 Changelog 작성 규칙
 
@@ -364,11 +378,24 @@ $EDITOR .harness/overrides/agents/planner.md
 - `### Added / Changed / Fixed / Notes` 섹션 구분
 - 본 PLAN 에 정의된 phase 번호 (`P3 완료`) 를 반드시 언급
 
-### 9.4 Issue 라벨 컨벤션
+### 9.4 개발 플로우 (로컬 우선 · 1인 운영)
 
-- `plan:v0.3`, `plan:v0.4`, ... — phase 별 분류
-- `area:L1` / `area:L2` / `area:L3` — 3-레이어 분류
-- `breaking` — 파괴적 변경 후보 (v1.0 이후로 연기)
+- **브랜치 전략**: `main` 직접 커밋. feature 브랜치 / PR 없음
+- **커밋 단위**: 의미 단위 atomic. 하나의 커밋은 하나의 목적 (docs / feat / fix / refactor)
+- **푸시 타이밍**: 로컬에서 기능이 동작하고 의미 있는 커밋 단위가 쌓이면 즉시 `git push origin main` (백업 목적)
+- **태그**: 의미 있는 마일스톤만 annotated tag (`v0.2.1`, `v0.3.0`). 문서 patch 는 태그 생략 가능
+- **Issue tracker / 라벨**: 현시점 **미사용**. 로드맵·phase 는 이 PLAN 문서가 단일 추적 매체
+- **사용 중 발견한 개선점**: 로컬 clone 에서 그 자리에서 fix → 빌드 필요 없음 (markdown + bash) → `/plugin update` 로 즉시 반영 → 검증 → 백업 push
+
+### 9.5 외부 adopter 발생 시 거버넌스 전환 기준
+
+아래 조건 **중 하나** 충족 시 본 §9 를 개정하여 issue tracker + PR 워크플로우를 활성화:
+
+- 본인 외 활성 사용자 1명 이상 확인 (external adopter)
+- GitHub Stars ≥ 10 또는 fork ≥ 3
+- v1.0.0 GA 릴리즈 시점 도달
+
+그 전까지는 **속도 > 격식** 원칙으로 운영한다. GitHub 는 백업·공유 창구이며 협업 도구가 아니다.
 
 ---
 
@@ -405,6 +432,7 @@ $EDITOR .harness/overrides/agents/planner.md
 | 일자 | 버전 | 변경 | 담당 |
 |---|---|---|---|
 | 2026-04-20 | **v1.0** | 최초 작성 — 3-레이어 아키텍처 + v0.3~v1.0 로드맵 + 7 리스크 + 6 PQG | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r2 | Executive Summary 에 "운영 모델 (1인 운영 · local-first)" 섹션 신설. §9.4 를 "Issue 라벨 컨벤션" → "개발 플로우 (로컬 우선)" 로 대체. §9.5 외부 adopter 시 거버넌스 전환 조건 신설. §6.2 KPI 를 Tier 1 (필수) / Tier 2 (외부 adopter 시) 로 분리 | @JangMinSeok (Claude-assisted) |
 
 ---
 
