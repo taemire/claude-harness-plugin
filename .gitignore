@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs / tmp
+*.log
+tmp/
+.tmp/
+
+# Node / bun (만약 도구 스크립트에서 사용 시)
+node_modules/
+package-lock.json
+bun.lockb
+
+# Plugin dev artifacts (추후 빌드 도구 도입 시)
+dist/
+build/

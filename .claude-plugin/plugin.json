@@ -1,0 +1,21 @@
+{
+  "name": "harness",
+  "version": "0.1.0",
+  "description": "Claude + Codex 혼합 벤더 하네스 플러그인 — /harness:run (Planner→Generator→Build Gate→Review→Evaluator→Adversarial 파이프라인), /harness:uiux (100% UI 커버리지 PDCA), /harness:resume (체크포인트 기반 자동 재개)",
+  "author": {
+    "name": "JangMinSeok"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "harness",
+    "pipeline",
+    "tdd",
+    "codex",
+    "checkpoint",
+    "tdd-harness"
+  ],
+  "homepage": "https://github.com/taemire/claude-harness-plugin",
+  "repository": "https://github.com/taemire/claude-harness-plugin.git"
+}
