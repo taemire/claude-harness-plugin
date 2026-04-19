@@ -6,21 +6,21 @@ argument-hint: "[--bl-id=BL-NNN] [--force] [--dry-run]"
 
 # /harness:resume — 하네스 자동 재개 (stub, P3 f)
 
-> **상태**: v0.1.0 스켈레톤. 본체는 **Green 구현 단계** 에서 구현. 이 스킬이 의존하는 shell 스크립트 4개 (`checkpoint_reader.sh`, `checkpoint_writer.sh`, `error_detector.sh`, `extract_bl_id.sh`) 의 **Red 테스트 (31 cases)** 는 이미 `harness/common/tests/` 에 존재 — 테스트가 명세이다. Green 구현 완료 시 이 문서를 교체한다.
+> **상태**: v0.1.0 스켈레톤. 본체는 **Green 구현 단계** 에서 구현. 이 스킬이 의존하는 shell 스크립트 4개 (`checkpoint_reader.sh`, `checkpoint_writer.sh`, `error_detector.sh`, `extract_bl_id.sh`) 의 **Red 테스트 (31 cases)** 는 이미 `.harness/common/tests/` 에 존재 — 테스트가 명세이다. Green 구현 완료 시 이 문서를 교체한다.
 
 ## 동작 요약 (설계 — P3)
 
 1. **BL-ID 결정**
    - `--bl-id=BL-NNN` 명시 시: 그대로 사용
-   - 미명시 시: `harness/common/extract_bl_id.sh` 호출 → 최근 커밋/이슈/요청에서 auto-extract
+   - 미명시 시: `.harness/common/extract_bl_id.sh` 호출 → 최근 커밋/이슈/요청에서 auto-extract
    - fallback: 가장 최근 수정된 `.harness/checkpoints/BL-*/` 디렉토리
 
-2. **상태 검증** — `harness/common/checkpoint_reader.sh status BL-NNN`
+2. **상태 검증** — `.harness/common/checkpoint_reader.sh status BL-NNN`
    - `status != "paused"` → 거부 + 안내 (예: `completed` 는 `/harness-clean` 후 신규 실행)
    - `resume_attempts >= resume_max` (기본 3) → `status = "awaiting_user"` 로 전환 + 사용자 대기
    - `started_at > 7일` → stale 경고, `--force` 없으면 거부
 
-3. **산출물 복원** — `phase-NN-artifacts/` → `harness/<type>/` 로 rsync
+3. **산출물 복원** — `phase-NN-artifacts/` → `.harness/<type>/` 로 rsync
    - 덮어쓰기 된 `SPEC.md / SELF_CHECK.md / QA_REPORT.md / output/` 을 중단 시점 상태로 되돌린다
 
 4. **파이프라인 재개** — `state.json.current_phase` 부터 `/harness:run` 의 내부 흐름 이어감
@@ -48,10 +48,10 @@ argument-hint: "[--bl-id=BL-NNN] [--force] [--dry-run]"
 
 ## 의존성 (shell 스크립트 4종)
 
-- `harness/common/checkpoint_writer.sh`
-- `harness/common/checkpoint_reader.sh`
-- `harness/common/error_detector.sh`
-- `harness/common/extract_bl_id.sh`
+- `.harness/common/checkpoint_writer.sh`
+- `.harness/common/checkpoint_reader.sh`
+- `.harness/common/error_detector.sh`
+- `.harness/common/extract_bl_id.sh`
 
 모두 Green 구현 단계에서 구현 예정. 현재는 Red 테스트만 존재.
 
@@ -74,7 +74,7 @@ argument-hint: "[--bl-id=BL-NNN] [--force] [--dry-run]"
 
 - 설계 문서: 프로젝트 저장소에서 관리
 
-- Red 테스트: `<project-root>/harness/common/tests/*.sh` (31 cases)
+- Red 테스트: `<project-root>/.harness/common/tests/*.sh` (31 cases)
 
 ## 제약 (v0.1.0 stub)
 

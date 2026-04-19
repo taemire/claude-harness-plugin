@@ -43,11 +43,11 @@ trigger-patterns:
 > **필수 참조**: `docs/specs/UI_COVERAGE_QUALITY_GATE.md` (QG-UI-COVERAGE-001) — 100% UI 커버리지 헌장·임계값·PR 체크리스트·금지 사항 5건이 담긴 SSOT. 본 스킬은 그 문서의 **집행 도구**다.
 
 핵심 산출물:
-- `web/e2e/harness/catalog/ui-primitives.json` — UI primitive 분류 + 행동 축 SSOT
-- `web/e2e/harness/inventory/<feature>.json` — 정적 스캔 결과
-- `web/e2e/harness/matrix/<feature>.json` — primitive × 상태 × 이벤트 × outcome 직교곱
-- `web/e2e/harness/scenarios/` — 자동 생성 또는 수제작 시나리오
-- `web/e2e/harness/reports/ui-coverage.md` — 커버리지 리포트 (Green/Amber/Red)
+- `web/e2e/.harness/catalog/ui-primitives.json` — UI primitive 분류 + 행동 축 SSOT
+- `web/e2e/.harness/inventory/<feature>.json` — 정적 스캔 결과
+- `web/e2e/.harness/matrix/<feature>.json` — primitive × 상태 × 이벤트 × outcome 직교곱
+- `web/e2e/.harness/scenarios/` — 자동 생성 또는 수제작 시나리오
+- `web/e2e/.harness/reports/ui-coverage.md` — 커버리지 리포트 (Green/Amber/Red)
 
 ---
 
@@ -125,35 +125,35 @@ trigger-patterns:
 2. 서버/배포 대상 확인:
    - 로컬: `curl -sf http://localhost:8090/api/health > /dev/null`
    - 배포: `HARNESS_BASE_URL=https://portal.code.myds.me:8443` 지정 시 원격 대상
-3. 카탈로그 존재 확인: `web/e2e/harness/catalog/ui-primitives.json`
+3. 카탈로그 존재 확인: `web/e2e/.harness/catalog/ui-primitives.json`
 4. **① Inventory**:
    ```bash
-   cd web && npx tsx e2e/harness/scripts/inventory-ui.ts \
-     --feature=<name> --out=e2e/harness/inventory/<name>.json
+   cd web && npx tsx e2e/.harness/scripts/inventory-ui.ts \
+     --feature=<name> --out=e2e/.harness/inventory/<name>.json
    ```
    결과 검증: `summary` 카운트 · `deadSuspects` 목록 즉시 출력
 5. **② Matrix**:
    ```bash
-   cd web && npx tsx e2e/harness/scripts/generate-matrix.ts \
-     --inventory=e2e/harness/inventory/<name>.json \
-     --out=e2e/harness/matrix/<name>.json
+   cd web && npx tsx e2e/.harness/scripts/generate-matrix.ts \
+     --inventory=e2e/.harness/inventory/<name>.json \
+     --out=e2e/.harness/matrix/<name>.json
    ```
 6. **③ Probe-Gen**:
    ```bash
-   cd web && npx tsx e2e/harness/scripts/generate-probes.ts \
-     --matrix=e2e/harness/matrix/<name>.json \
-     --out-dir=e2e/harness/scenarios/auto
+   cd web && npx tsx e2e/.harness/scripts/generate-probes.ts \
+     --matrix=e2e/.harness/matrix/<name>.json \
+     --out-dir=e2e/.harness/scenarios/auto
    ```
 7. **④ Execute**:
    ```bash
-   cd web && npx playwright test --config=e2e/harness/playwright.harness.config.ts
+   cd web && npx playwright test --config=e2e/.harness/playwright.harness.config.ts
    ```
 8. **⑤ Gap**:
    ```bash
-   cd web && npx tsx e2e/harness/scripts/gap-analysis.ts \
-     --inventory=e2e/harness/inventory/<name>.json \
-     --results=e2e/harness/reports/harness-results.json \
-     --out=e2e/harness/reports/ui-coverage.md
+   cd web && npx tsx e2e/.harness/scripts/gap-analysis.ts \
+     --inventory=e2e/.harness/inventory/<name>.json \
+     --results=e2e/.harness/reports/harness-results.json \
+     --out=e2e/.harness/reports/ui-coverage.md
    ```
 9. **⑥ Feedback**: 새로 발견된 primitive 패턴·dead UI 휴리스틱을 카탈로그에 제안 (인간 리뷰 후 커밋)
 10. 사용자에게 요약 보고 (아래 §리포트 포맷)
@@ -163,7 +163,7 @@ trigger-patterns:
 대상 feature의 모든 `.ts`/`.tsx`를 스캔해 UI primitive 인스턴스를 수집. 각 hit는 `file:line + data-testid + 의심 dead UI 시그널`을 포함.
 
 - 입력: `--feature=<name>` (예: `document-drive`)
-- 출력: `web/e2e/harness/inventory/<name>.json`
+- 출력: `web/e2e/.harness/inventory/<name>.json`
 - 주 관심: `summary`(primitive별 개수), `deadSuspects`(placeholder/window-prompt 등)
 
 ### `matrix` (② 단독)

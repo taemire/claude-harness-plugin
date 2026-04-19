@@ -52,7 +52,9 @@ claude --plugin-dir /path/to/claude-harness-plugin
 
 ```
 claude-harness-plugin/
-├── .claude-plugin/plugin.json     ← 매니페스트 (name/description/version)
+├── .claude-plugin/
+│   ├── plugin.json                ← **플러그인 매니페스트 (버전 SSOT)**
+│   └── marketplace.json           ← 로컬 마켓플레이스 매니페스트
 ├── README.md                       ← 이 문서
 ├── LICENSE                         ← MIT
 ├── CHANGELOG.md                    ← 버전 이력
@@ -60,12 +62,19 @@ claude-harness-plugin/
 └── skills/
     ├── run/SKILL.md               ← /harness:run
     ├── uiux/SKILL.md              ← /harness:uiux
-    └── resume/SKILL.md            ← /harness:resume (stub)
+    └── resume/SKILL.md            ← /harness:resume
 ```
 
 ## 상태
 
+- **v0.2.0 (2026-04-20)**: `.harness/` 경로 통일 (BL-305) + VERSION SSOT 도입 + marketplace.json 번들링
 - **v0.1.0 (2026-04-19)**: 초기 스켈레톤 + 기존 2개 스킬 이전 + `resume` stub
+
+## 버전 SSOT 규칙
+
+- `.claude-plugin/plugin.json` 의 `version` 필드가 **유일한 SSOT** 이다 (Claude Code plugin spec 가 이 값을 읽는다)
+- `.claude-plugin/marketplace.json` 의 `metadata.version` 과 `plugins[0].version` 은 `plugin.json` 값을 따라 수동 동기화한다
+- 버전 bump 시 세 필드를 반드시 함께 갱신한다
 
 ## 로드맵
 
@@ -78,8 +87,8 @@ claude-harness-plugin/
 
 ## 사용 컨텍스트
 
-- 호출 시 작업 디렉토리 (`${CLAUDE_PROJECT_DIR}`) 를 프로젝트 루트로 간주한다. 하네스 산출물은 `.harness/` (체크포인트) 및 `harness/<type>/` (SPEC/SELF_CHECK/QA_REPORT/output) 아래에 기록된다.
-- 체크포인트 엔진 의존 스크립트는 `harness/common/` 에 위치해야 하며, 프로젝트 측에서 자체 준비한다 (`checkpoint_reader.sh`, `checkpoint_writer.sh`, `error_detector.sh`, `extract_bl_id.sh`).
+- 호출 시 작업 디렉토리 (`${CLAUDE_PROJECT_DIR}`) 를 프로젝트 루트로 간주한다. 하네스 산출물은 `.harness/` (체크포인트) 및 `.harness/<type>/` (SPEC/SELF_CHECK/QA_REPORT/output) 아래에 기록된다.
+- 체크포인트 엔진 의존 스크립트는 `.harness/common/` 에 위치해야 하며, 프로젝트 측에서 자체 준비한다 (`checkpoint_reader.sh`, `checkpoint_writer.sh`, `error_detector.sh`, `extract_bl_id.sh`).
 
 ## 라이선스
 
