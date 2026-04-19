@@ -1,5 +1,16 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.2.1] — 2026-04-20
+
+### Added
+- `docs/PLAN-v1.0.md` — **하네스 개선 프로젝트 SSOT Living Document**. 3-레이어 아키텍처(L1 변수 주입 · L2 Agent Replace · L3 호환성 게이트), v0.3~v1.0 릴리즈 로드맵 (9 milestones), 6 phase 상세 (P1~P6), 7 리스크 + 완화, 6 Plan Quality Gate 포함
+- `docs/README.md` — 문서 인덱스 + 작성 규칙 (Living Document / SSOT 우선 / Revision Log 필수)
+- README `## 로드맵` 섹션을 PLAN-v1.0 연동형 테이블로 확장 (v0.1~v1.0 마일스톤)
+
+### Notes
+- 이번 릴리즈는 **문서-only** (patch 증가). 런타임 동작 불변
+- 다음 릴리즈 v0.3.0 부터 PLAN 에 정의된 phase P1~P3 구현 착수 예정
+
 ## [0.2.0] — 2026-04-20
 
 ### Changed
