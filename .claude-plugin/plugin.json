@@ -1,7 +1,7 @@
 {
   "name": "harness",
-  "version": "0.5.0",
-  "description": "Claude + Codex 혼합 벤더 하네스 플러그인 — /harness:run (Planner→Generator→Build Gate→Review→Evaluator→Adversarial 파이프라인), /harness:uiux (100% UI 커버리지 PDCA), /harness:resume (체크포인트 기반 자동 재개)",
+  "version": "0.6.0",
+  "description": "Claude + Codex 혼합 벤더 하네스 플러그인 — /harness:run (Planner→Generator→Build Gate→Review→Evaluator→Adversarial 파이프라인), /harness:uiux (100% UI 커버리지 PDCA), /harness:resume (체크포인트 기반 자동 재개). v0.6 — 멀티세션 하드닝(HARNESS-MSC-001): BL-ID 네임스페이스 격리, session registry, atomic-write, seed/restore 가드, per-session config.",
   "author": {
     "name": "JangMinSeok"
   },

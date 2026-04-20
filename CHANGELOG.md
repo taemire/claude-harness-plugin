@@ -1,5 +1,86 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.6.0] — 2026-04-20
+
+### Added — Multi-Session Hardening (P7 완료 / HARNESS-MSC-001)
+
+본 릴리즈는 **TSGroup Portal Hub BL-306 세션**(2026-04-20 17:14:18) 에서
+third profile 의 Planner 산출물(`.harness/feature/SPEC.md`, 577 lines, BL-306)
+이 s022 세션의 seed/restore 로직에 의해 archive 원본(980 lines, BL-299.2.x)으로
+**silent overwrite 된 사건** 을 근거로, claude-nonstop 멀티 프로파일 환경의
+동일 프로젝트 다중 세션 운영 시 하네스 산출물 계약 무결성을 보장하기 위한
+6개 핵심 구조를 도입한다.
+
+#### `common/` — helper 4종 (신규 디렉토리)
+
+- **`common/session-registry.sh`** (P0-2) — `.harness/active-sessions.json`
+  읽기/쓰기. subcmds: `register|heartbeat|list|others|unregister|prune`.
+  profile 자동 감지(claude-nonstop/profiles/{default,second,third,fourth}).
+  stale threshold `HARNESS_SESSION_STALE_SECONDS` (기본 600s).
+- **`common/atomic-write.sh`** (P0-3) — tmp→rename 패턴 래퍼.
+  `--if-not-exists` + `HARNESS_ATOMIC_WRITE_IF_NOT_EXISTS=1` env.
+- **`common/seed-guard.sh`** (P0-4) — 타세션 활성 + target 존재 감지 후
+  abort. `HARNESS_FORCE_RESTORE=1` 로 우회.
+- **`common/codex-socket.sh`** (P1-8) — `HARNESS_CODEX_PER_SESSION_SOCKET=1`
+  시 세션별 socket path 반환. 기본 비활성 (기존 broker socket 유지).
+
+#### `templates/` — seed 원본 (BL-ID 격리 구조용)
+
+- `templates/feature/SPEC.template.md`, `templates/ui/SPEC.template.md`,
+  `templates/generic/SPEC.template.md` — `<BL-ID>` 플레이스홀더 + 기본 골격
+
+#### `hooks/session-start.sh` — v0.6 확장
+
+기존 L0/L2/L3 유지 + 4개 단계 추가:
+- **[4] L0' load_session_override** (P1-7) — `.harness/session-<CLAUDE_SESSION_ID>.yaml`
+  존재 시 공유 config.yaml 위에 덮어쓰기
+- **[5] L4 register_active_session** (P0-2) — SessionStart 진입 시 자동 등록
+- **[6] L5 preflight_multi_session** (HARNESS-MSC-001):
+  - [6a] 타세션 활성 감지 (10분 내 heartbeat)
+  - [6b] 최근 `.harness/<type>/` 쓰기 감지 (find -newermt)
+  - [6c] archive-restore drift 감지 (SPEC.md == archive/*.md 바이트 동일)
+
+#### `hooks/hooks.json` — Stop matcher 추가
+
+- `Stop` (".*") → `common/session-registry.sh unregister` 자동 호출
+- SessionStart (startup|resume) 기존 유지
+
+### Changed — BL-ID 네임스페이스 격리 (P0-1)
+
+`skills/run/SKILL.md` 의 경로 상수 24곳을 `.harness/<type>/<BL-ID>/` 형태로 전환:
+- `SPEC.md`, `SELF_CHECK*.md`, `QA_REPORT.md`, `SPRINT_CONTRACT.md`,
+  `HANDOFF.md`, `FINAL_REVIEW.md`, `MERGED_REVIEW.md`, `REFACTOR_LOG.md`,
+  `REVIEW_NOTES.md`, `CODEX_*.md`, `RESUME*.md`, `RVG_RESULT.json`,
+  `output/`, `context/`, `logs/` — 모두 `<BL-ID>` 네임스페이스로 이동
+- `agents/`, `archive/`, `common/`, `checkpoints/<BL-ID>/`, `LESSONS_LEARNED.md`
+  는 공유 유지 (BL-ID 격리 대상 아님)
+
+`skills/run/SKILL.md` 상단에 **0단계: BL-ID 해결** 섹션 신설:
+- `common/extract_bl_id.sh` 호출 (plugin root → project 순 fallback)
+- 해결 우선순위: 요청 원문 → git log → gh issue → BL-UNKNOWN
+- Legacy flat layout fallback — `.harness/<type>/SPEC.md` (평면) 존재 시
+  기존 경로 그대로 사용 (v0.7 deprecated, v1.0 제거 예정)
+- session-registry register + 타세션 경고 시 go/no-go 확인 절차 포함
+
+`skills/uiux/SKILL.md` · `skills/resume/SKILL.md` 는 변경 없음 —
+해당 스킬의 `.harness/` 경로는 BL-ID 격리 대상 아님
+(uiux: `web/e2e/.harness/` 별개 테스트 디렉토리 / resume: `.harness/checkpoints/<BL-ID>/`
+이미 격리).
+
+### Notes
+
+- **Non-breaking minor bump** — v0.5 설치 fallback 지원 유지.
+  `override-manifest.compatible_base_version = "~0.5"` 선언은 경고만 출력(blocking 없음).
+- 정식 전환은 프로젝트 측 override 에서 `compatible_base_version` 을 `"~0.6"` 으로
+  변경한 시점에 적용.
+- **실측 검증 (Portal Hub)**: `CLAUDE_PROJECT_DIR=...tsgroup-portal-hub` 로
+  `hooks/session-start.sh` 수동 실행 시 L5 [6c] 가 BL-306 SPEC drift 를
+  즉시 자동 탐지 ✅ (본 릴리즈가 방어하려는 실제 사건 증거).
+- PLAN-v1.0.md v1.0-r7 로 갱신 — v0.6 "Starter templates" → "Multi-Session
+  Hardening" 으로 재배정. Starter templates 는 v0.7 로 이관.
+- 상세 설계: `docs/PHASE-P7-multi-session-hardening.md`
+- 프로젝트 레벨 SSOT: `$PORTAL_HUB/docs/specs/HARNESS_MULTI_SESSION_CONTENTION.md`
+
 ## [0.5.0] — 2026-04-20
 
 ### Added — `.harness/config.yaml` 프로젝트 설정 SSOT (P1 v2 완료)
