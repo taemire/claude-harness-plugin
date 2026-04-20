@@ -1,5 +1,36 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.7.0] — 2026-04-20
+
+### Added — Starter templates + 커스터마이징 가이드 (P8 완료)
+
+신규 프로젝트가 **5분 안에** claude-harness-plugin 을 프로젝트 도메인에
+맞게 커스터마이징할 수 있는 seed kit + README 가이드.
+
+#### `templates/overrides-starter/` (신규 디렉토리)
+- `README.md` — 5분 onboarding 단계별 가이드 (설치 → 복사 → 값 입력 → 검증 → 첫 실행) + FAQ 4건
+- `config.yaml.example` — `.harness/config.yaml` 시작 값 (project_name/bl_prefix/mode)
+- `override-manifest.json.example` — 최소 스키마 (`compatible_base_version` `~0.6`)
+- `agents/planner.md.example` — Planner override 골격 + `[여기에 프로젝트 제약을 작성]` 주석
+- `agents/evaluator.md.example` — Evaluator override (선택적, 채점 절차 커스터마이징용)
+- `eval_criteria.md.example` — 합격 기준 9 카테고리 골격 (Portal Hub 사례 일반화)
+
+#### README.md §커스터마이징 가이드 (신규 섹션)
+- 빠른 시작 — `cp` + `mv` 만으로 5단계 onboarding
+- 3-레이어 아키텍처 다이어그램 (L0 config / L2 agent replace / L3 semver gate)
+- FAQ 4건 — git 커밋 / 버전 bump / 멀티세션 / 프로젝트 규약 주입
+
+#### README.md §상태 + §로드맵 갱신
+- v0.6/v0.7 entry 추가
+- v0.8 에 Eval criteria override + `/harness:resume` 본체 통합
+- v0.9 에 Migration tool + Telemetry 통합
+
+### Notes
+- **Non-breaking minor bump** — starter 사용 안 해도 기존 설치 불변
+- Portal Hub 는 이미 v0.5~v0.6 단계에서 override 구조를 직접 구축한 사례라 starter 없이 운영. 본 starter 는 외부 adopter 를 위한 onboarding 가속
+- PLAN-v1.0.md v1.0-r8 갱신 — v0.7 "Starter templates" 완료 체크
+- 상세: `templates/overrides-starter/README.md`
+
 ## [0.6.0] — 2026-04-20
 
 ### Added — Multi-Session Hardening (P7 완료 / HARNESS-MSC-001)

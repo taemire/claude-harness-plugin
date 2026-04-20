@@ -1,0 +1,21 @@
+{
+  "$comment": "이 파일을 .harness/overrides/override-manifest.json 으로 복사. compatible_base_version 을 사용 중인 플러그인 버전에 맞추세요.",
+  "schema_version": "1.0",
+  "compatible_base_version": "~0.6",
+  "overrides": [
+    {
+      "type": "agent",
+      "name": "planner",
+      "reason": "프로젝트 도메인 제약 주입 — 여기에 간단히 이유 기록 (예: Clean Architecture + 코딩 규약 + 평가 기준)"
+    }
+  ],
+  "created_at": "YYYY-MM-DD",
+  "last_verified_base_version": "0.6.0",
+  "changelog": [
+    {
+      "date": "YYYY-MM-DD",
+      "change": "최초 생성 — planner override 등록",
+      "commits": []
+    }
+  ]
+}

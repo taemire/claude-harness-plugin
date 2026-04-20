@@ -1,0 +1,35 @@
+# claude-harness-plugin L0 config — 프로젝트 설정 SSOT
+# 이 파일은 `.harness/config.yaml` 로 복사하여 프로젝트 값을 채우세요.
+# SessionStart hook 이 HARNESS_* env 로 export 하며 SKILL.md 가 참조합니다.
+# 참조: docs/PHASE-P1-v2-config-yaml.md
+
+schema_version: "1.0"
+
+harness:
+  # 프로젝트 이름 — SKILL 출력/로그에 삽입됩니다
+  project_name: my-project
+
+  # 백로그 ID 접두사 — /harness:run "BL-123 ..." 같은 입력과 맞춤
+  bl_prefix: BL
+
+  # 도메인 평가 기준 파일 (선택) — Evaluator 가 자동 Read
+  eval_criteria_path: .harness/overrides/eval_criteria.md
+
+  # 기본 실행 모드 — lite | standard | pro | ultra
+  # - lite:     Generator → Evaluator (간단 수정)
+  # - standard: Planner → Generator → RVG → Evaluator (기본)
+  # - pro:      Standard + Sprint Contract + Final Reviewer (복잡 기능)
+  # - ultra:    Pro + 전 단계 Opus (최고 품질, 고비용)
+  harness_mode_default: standard
+
+# 프로젝트 고유 커스텀 (선택) — 현 버전은 문서화 용도.
+# 향후 v0.7+ 에서 HARNESS_CUSTOM_* 자동 export 예정.
+custom:
+  # 예시: Clean Architecture 레이어
+  # clean_arch_layers: [domain, usecase, repository, api]
+
+  # 예시: UI 커버리지 최소치
+  # ui_coverage_min: 95
+
+  # 예시: 릴리즈 정책
+  # versioning_policy: "Z 자율, Y/X 사용자 승인"

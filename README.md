@@ -67,6 +67,8 @@ claude-harness-plugin/
 
 ## 상태
 
+- **v0.7.0 (2026-04-20)**: Starter templates — `templates/overrides-starter/` 5분 onboarding kit + README §커스터마이징 가이드 (P8)
+- **v0.6.0 (2026-04-20)**: Multi-Session Hardening (HARNESS-MSC-001) — BL-ID 네임스페이스 격리, session registry, atomic-write, seed/restore 가드, per-session config (P7)
 - **v0.5.0 (2026-04-20)**: `.harness/config.yaml` 프로젝트 SSOT 도입 — L0 config loader + 3단 cascade + SKILL env 치환 (P1 v2)
 - **v0.4.4 (2026-04-20)**: commands/ flatten + 슬래시 커맨드 중복 해소
 - **v0.4.3 (2026-04-20)**: `/harness:*` 슬래시 커맨드 노출 복구 (BL-307)
@@ -93,9 +95,79 @@ claude-harness-plugin/
 | **v0.3.x** (완료) | L1 변수 주입 레이어 — userConfig 4키 + SKILL.md 치환점 |
 | **v0.4.x** (완료) | L2 Agent Replace + L3 호환성 게이트 — SessionStart hook + link-farm + semver check + commands/ 슬래시 커맨드 |
 | **v0.5.x** (완료) | P1 v2 — `.harness/config.yaml` 프로젝트 SSOT + L0 config loader + 3단 cascade |
-| **v0.5.x** | `/harness:resume` 본체 구현 (체크포인트 엔진) |
-| **v0.6.x** | Starter templates + 커스터마이징 가이드 강화 |
+| **v0.6.x** (완료) | P7 Multi-Session Hardening — BL-ID namespace + session registry + atomic-write + seed guard + per-session config |
+| **v0.7.x** (완료) | P8 Starter templates + §커스터마이징 가이드 |
+| **v0.8.x** | Evaluation criteria override 전용 파이프라인 + `/harness:resume` 본체 구현 |
+| **v0.9.x** | Cross-project migration tool + Telemetry opt-in (선택) |
 | **v1.0.x** | API stable lock-in, Anthropic 공식 마켓플레이스 등록 검토 |
+
+---
+
+## 커스터마이징 가이드 (5분 onboarding)
+
+### 빠른 시작
+
+```bash
+# 1. 플러그인 설치
+/plugin marketplace add taemire/claude-harness-plugin
+/plugin install harness
+
+# 2. 프로젝트 루트에서 starter 복사
+cp -r ${CLAUDE_PLUGIN_ROOT}/templates/overrides-starter .harness/overrides
+cp ${CLAUDE_PLUGIN_ROOT}/templates/config.yaml.example .harness/config.yaml
+
+# 3. .example 제거
+cd .harness/overrides
+mv override-manifest.json.example override-manifest.json
+mv eval_criteria.md.example eval_criteria.md
+mv agents/planner.md.example agents/planner.md
+cd ../..
+
+# 4. 프로젝트 값 입력 (config.yaml 의 project_name, bl_prefix 수정)
+$EDITOR .harness/config.yaml
+
+# 5. 첫 실행
+/harness:run "BL-001 첫 기능"
+```
+
+### 3-레이어 아키텍처
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ L0. Config Loader   (.harness/config.yaml → HARNESS_* env)  │
+│     project_name · bl_prefix · eval_criteria_path · mode    │
+└─────────────────────────────────────────────────────────────┘
+                 ↓ SessionStart hook 이 export
+┌─────────────────────────────────────────────────────────────┐
+│ L2. Agent Replace   (.harness/overrides/agents/ → link-farm)│
+│     planner.md · evaluator.md 등 프로젝트 도메인 override   │
+└─────────────────────────────────────────────────────────────┘
+                 ↓ Claude Code subagent priority (project > plugin)
+┌─────────────────────────────────────────────────────────────┐
+│ L3. Semver Gate     (override-manifest.json 호환성 검사)    │
+│     compatible_base_version ~0.6 → 불일치 시 경고           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### FAQ
+
+**Q. `.harness/overrides/` 를 git 에 커밋해야 하나요?**
+→ 예. 팀 공유 자산입니다. `.claude/agents/` (symlink) 만 gitignore 합니다.
+
+**Q. 플러그인 버전이 bump 되면 내 override 가 깨지나요?**
+→ 아니요. L3 호환성 게이트가 경고만 출력하고 파이프라인은 계속 실행됩니다 (fail-open). 마이그레이션 가이드가 있으면 경고에 경로가 표시됩니다.
+
+**Q. 멀티 프로파일 / 멀티세션 환경에서 안전한가요?**
+→ v0.6+ 부터 `.harness/active-sessions.json` + SessionStart preflight + archive-restore drift 감지를 내장합니다 (PHASE-P7 참조).
+
+**Q. UI 커버리지/SPA 상태 보존 같은 프로젝트별 규약을 에이전트에 주입하려면?**
+→ `templates/overrides-starter/agents/planner.md.example` 의 `[여기에 프로젝트 제약을 작성]` 섹션을 프로젝트 규약으로 채웁니다. Portal Hub 의 실사례는 `docs/PHASE-P7-multi-session-hardening.md` §1.1 참조.
+
+### 상세 문서
+
+- [templates/overrides-starter/README.md](./templates/overrides-starter/README.md) — 단계별 세부 가이드
+- [docs/PLAN-v1.0.md](./docs/PLAN-v1.0.md) — 장기 아키텍처 로드맵
+- [docs/PHASE-P7-multi-session-hardening.md](./docs/PHASE-P7-multi-session-hardening.md) — 멀티세션 방어 설계
 
 ## 사용 컨텍스트
 
