@@ -1,5 +1,21 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.4.3] — 2026-04-20
+
+### Fixed — 슬래시 커맨드 미노출 (BL-307)
+- v0.4.2 까지 플러그인이 `skills/{run,uiux,resume}/` 만 배포하고 `commands/` 디렉토리를 제공하지 않아, 공식 문서(CLAUDE.md §Harness & Long Pipelines) 가 광고한 `/harness:run · /harness:uiux · /harness:resume` 슬래시 커맨드가 `Unknown command` 로 실패하거나 `/` 자동완성에 노출되지 않음.
+- 증상 재현: `/harness:uiux scan --feature=document-drive` 입력 → `Unknown command: /harness:uiux`. `/reload-plugins` 후에도 슬래시 프리픽스 진입로 부재.
+
+### Added — `commands/harness/{run,uiux,resume}.md`
+- `commands/harness/run.md` — `/harness:run` 진입 래퍼. 스킬 `harness:run` 호출 + `CLAUDE.md §사전 점검 프리플라이트` 준수 지시
+- `commands/harness/uiux.md` — `/harness:uiux` 진입 래퍼. 하위 명령(scan/inventory/matrix/probe-gen/execute/gap/feedback/plan/check/report/full/setup) + QG-01~05 준수 지시
+- `commands/harness/resume.md` — `/harness:resume` 진입 래퍼. `--bl-id` 자동 탐색 규약 + awaiting_user 전환 규약 스킬 위임
+
+### Notes
+- **실측 절차**: `/plugin update harness` → 캐시 0.4.3 동기화 → 신규 세션 시작 → `/` 입력 시 `/harness:run · /harness:uiux · /harness:resume` 자동완성 노출 확인
+- 기존 스킬 번들(`skills/{run,uiux,resume}/SKILL.md`) 은 **변경 없음** — 슬래시 커맨드는 shim 이며 실제 로직은 스킬 재사용
+- 관련 이슈: `tsgroup-portal-hub` 백로그 BL-307
+
 ## [0.4.1] — 2026-04-20
 
 ### Fixed — hotfix: 공식 hook 스펙 준수
