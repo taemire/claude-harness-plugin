@@ -1,5 +1,22 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.7.2] — 2026-04-20
+
+### Changed — fallback segment: `AUTO` → `TASK`
+
+v0.7.1 의 `<PREFIX>-AUTO-YYYYMMDD-HHMM` 자동 할당 네이밍을 `<PREFIX>-TASK-*`
+로 변경. 사용자 피드백 반영 — "AUTO" 가 기술적 의미 과잉, "TASK" 가
+일감(업무 단위) 개념을 더 명확히 전달.
+
+- `common/extract_bl_id.sh` fallback printf: `AUTO` → `TASK`
+- `skills/run/SKILL.md` 0단계 예시/문구 전부 `TASK` 로 치환
+  - 예: `BL-TASK-20260420-2240` (기존 `BL-AUTO-*`)
+- 의미는 동일 — "BL/이슈 번호 없이 자연어로 요청 시 자동 할당되는 일감 ID"
+
+### Notes
+- **Non-breaking patch** — v0.7.1 기존 사용자의 `<PREFIX>-AUTO-*` 디렉토리는
+  그대로 유지됨 (수동 `git mv` 로 재명명 가능). 신규 실행부터 `TASK` segment.
+
 ## [0.7.1] — 2026-04-20
 
 ### Fixed — Task-ID prefix 일반화 (범용성 회복)

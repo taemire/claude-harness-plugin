@@ -65,10 +65,10 @@ main() {
   fi
 
   # 4) fallback — auto-generated task id (OMC mission 스타일)
-  # 기본값 "AUTO" 는 "식별 실패" 가 아닌 "자동 할당" 을 뜻함. 사용자가
-  # BL/이슈 번호 없이 자연어로 요청해도 하네스가 즉시 진행할 수 있도록
-  # <PREFIX>-AUTO-YYYYMMDD-HHMM 형태로 고유 네임스페이스 부여.
-  printf '%s-AUTO-%s\n' "$PREFIX" "$(date +%Y%m%d-%H%M)"
+  # segment "TASK" 는 "자동 할당된 일감" 을 뜻함. 사용자가 BL/이슈 번호 없이
+  # 자연어로 요청해도 하네스가 즉시 진행할 수 있도록 <PREFIX>-TASK-YYYYMMDD-HHMM
+  # 형태로 고유 네임스페이스 부여.
+  printf '%s-TASK-%s\n' "$PREFIX" "$(date +%Y%m%d-%H%M)"
   exit 0
 }
 

@@ -179,27 +179,27 @@ TASK_ID=$(bash ${CLAUDE_PLUGIN_ROOT}/common/extract_bl_id.sh "[사용자 요청 
 1. 요청 원문의 첫 번째 `<PREFIX>-<digits>`
 2. `git log --oneline -n 10` 첫 번째 `<PREFIX>-<digits>`
 3. `gh issue list` 첫 번째 `<PREFIX>-<digits>` (`GH_DISABLED=1` 이면 skip)
-4. fallback: `<PREFIX>-AUTO-YYYYMMDD-HHMM` (자동 할당, OMC mission 스타일)
+4. fallback: `<PREFIX>-TASK-YYYYMMDD-HHMM` (자동 할당, OMC mission 스타일)
 
 **자동 Task-ID 할당 (fallback 도달 시 — 경고 없이 진행)**:
-사용자가 BL/이슈 번호 없이 자연어로 요청해도 하네스는 즉시 동작한다. `<PREFIX>-AUTO-YYYYMMDD-HHMM` 형태로 **고유 네임스페이스가 자동 부여**되며 파이프라인이 그대로 진행된다. 예:
+사용자가 BL/이슈 번호 없이 자연어로 요청해도 하네스는 즉시 동작한다. `<PREFIX>-TASK-YYYYMMDD-HHMM` 형태로 **고유 네임스페이스가 자동 부여**되며 파이프라인이 그대로 진행된다. 예:
 
 ```
 사용자: "로그인 폼 리다이렉트 버그 수정"
-→ extract_bl_id.sh: TASK_ID=BL-AUTO-20260420-2240
-→ .harness/feature/BL-AUTO-20260420-2240/SPEC.md 생성
+→ extract_bl_id.sh: TASK_ID=BL-TASK-20260420-2240
+→ .harness/feature/BL-TASK-20260420-2240/SPEC.md 생성
 → 파이프라인 정상 진행
 ```
 
 **사용자에게 한 줄 알림만 출력** (go/no-go 확인 없이 계속):
 ```
-🎯 Task-ID 미식별 — 자동 할당: BL-AUTO-20260420-2240
-   (완료 후 실제 이슈 번호 확인되면 `git mv .harness/feature/BL-AUTO-* .harness/feature/<실제-ID>` 로 재명명 가능)
+🎯 Task-ID 미식별 — 자동 할당: BL-TASK-20260420-2240
+   (완료 후 실제 이슈 번호 확인되면 `git mv .harness/feature/BL-TASK-* .harness/feature/<실제-ID>` 로 재명명 가능)
 ```
 
 **완료 후 권장 정리** (선택적, 사용자 재량):
 - 작업이 실제 이슈/백로그 항목과 대응되는 것으로 판명되면 `git mv` 로 디렉토리 이름 교체
-- 아니면 누적된 `*-AUTO-*` 디렉토리는 주기적으로 archive 이동 또는 삭제
+- 아니면 누적된 `*-TASK-*` 디렉토리는 주기적으로 archive 이동 또는 삭제
 
 **Legacy flat layout fallback (v0.5 호환)**:
 - 본 스킬이 진입 시 `.harness/<type>/SPEC.md` (TASK-ID 없는 평면 경로) 이 존재하면 해당 **레거시 세션으로 간주** 하여 새 경로 생성 없이 기존 경로를 그대로 사용합니다. (v0.8 에서 deprecation 경고, v1.0 에서 제거 예정)
