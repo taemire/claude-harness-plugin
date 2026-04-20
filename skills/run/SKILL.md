@@ -30,11 +30,11 @@ Claude는 Plan/FE/Arbit, Codex는 Plan Review/BE/Cross-Review를 담당합니다
 /harness:run "릴리즈 다운로드 카드 UI 개선"    ← 자동 감지
 /harness:run "파트너사 계약 만료 알림 시스템"  ← 자동 감지
 /harness:run "파트너사 계약 만료 알림 시스템" --mode=pro --codex  ← Codex 강제 활성
-/harness:run "BL-123 sample infra feature" --codex --codex-level=pro    ← Standard 모드 + Codex Pro 검토
+/harness:run "${user_config.bl_prefix}-123 sample infra feature" --codex --codex-level=pro    ← Standard 모드 + Codex Pro 검토
 /harness:run "전수 테스트" --type=qa            ← QA 전수 테스트
 /harness:run --type=qa --scope=module:release   ← 모듈별 QA
 /harness:run --type=qa --mode=sweep             ← 전체 sweep
-/harness:run "BL-456 sample auth feature" --mode=ultra      ← 전 단계 Opus, 한 번에 고품질
+/harness:run "${user_config.bl_prefix}-456 sample auth feature" --mode=ultra      ← 전 단계 Opus, 한 번에 고품질
 /harness:run "복잡한 인증 시스템" --mode=ultra --codex  ← Ultra + Codex 강제
 ```
 
@@ -407,7 +407,7 @@ Codex 호출 실패 시 하네스를 차단하지 않음 — "Plan Deep Review: 
 - ${CLAUDE_PROJECT_DIR}/internal/domain/ 기존 패턴 참조
 - ${CLAUDE_PROJECT_DIR}/internal/repository/ sqlc 패턴 참조
 - ${CLAUDE_PROJECT_DIR}/internal/api/graphql/ resolver 패턴 참조
-- ${CLAUDE_PROJECT_DIR}/web/src/components/portal/ 컴포넌트 패턴 참조
+- ${CLAUDE_PROJECT_DIR}/web/src/components/ 컴포넌트 패턴 참조
 
 전체 기능을 구현하고 결과를 ${CLAUDE_PROJECT_DIR}/.harness/feature/output/ 에 저장하라.
 완료 후 ${CLAUDE_PROJECT_DIR}/.harness/feature/SELF_CHECK.md 를 작성하라.

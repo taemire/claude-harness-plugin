@@ -1,5 +1,27 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.3.0] — 2026-04-20
+
+### Added
+- **L1 변수 주입 레이어 (P1 완료)**: `.claude-plugin/plugin.json` 에 `userConfig` 블록 신설. 4 키 선언
+  - `project_name` (string, default `""`, 프로젝트 이름)
+  - `bl_prefix` (string, default `"BL"`, 백로그 ID 접두사)
+  - `eval_criteria_path` (string, default `""`, 도메인 평가 기준 파일 경로)
+  - `harness_mode_default` (string, default `"standard"`, 기본 실행 모드)
+- `docs/PHASE-P1-userConfig.md` — P1 상세 스펙 (스키마 확정 · 치환점 규약 · 수용 기준 6개 · 리스크 완화)
+
+### Changed
+- **SKILL.md 치환점 삽입 (P2 완료)**: 하드코딩된 프로젝트 특화 값을 `${user_config.*}` 치환점으로 전환
+  - `skills/run/SKILL.md`: `BL-123`/`BL-456` → `${user_config.bl_prefix}-123/456`, `components/portal/` → `components/`
+  - `skills/uiux/SKILL.md`: `portal.code.myds.me:8443` → `your-app.example.com` (generic placeholder)
+  - `skills/resume/SKILL.md`: `BL-123`/`BL-456`/`BL-999` → `${user_config.bl_prefix}-123/456/999`
+- `docs/PLAN-v1.0.md`: §5 P1/P2 체크박스 완료 처리 + Revision Log 엔트리 추가
+
+### Notes
+- **Non-breaking minor bump** — v0.2.x 설치 dry run 결과와 동일 출력 (bl_prefix default `BL` fallback)
+- 다음 릴리즈 v0.4.0 에서 **L2 Agent Replace 레이어** (P3 SessionStart hook + link-farm) 착수
+- Claude Code runtime 의 `${user_config.KEY}` resolve 동작은 릴리즈 후 세션 dry run 으로 AC-3/AC-4 검증 필요
+
 ## [0.2.2] — 2026-04-20
 
 ### Changed

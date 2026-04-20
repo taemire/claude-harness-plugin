@@ -211,8 +211,8 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 | 버전 | 마일스톤 | 목표 |
 |:--|:--|:--|
 | **v0.2.0** (완료) | `.harness/` 경로 통일 + plugin.json SSOT 확정 | ✅ 2026-04-20 릴리즈 |
-| **v0.3.0** | **L1 변수 주입 레이어 + L3 호환성 게이트** | Non-breaking, additive |
-| **v0.4.0** | **L2 Agent Replace 레이어** (SessionStart hook + link-farm) | Non-breaking |
+| **v0.3.0** (완료) | **L1 변수 주입 레이어 (P1+P2)** — userConfig 4키 + SKILL.md 치환점 | ✅ 2026-04-20 릴리즈 (P3 는 v0.4.0 로 이관) |
+| **v0.4.0** | **L2 Agent Replace 레이어 + L3 호환성 게이트** (P3 SessionStart hook + link-farm + semver check) | Non-breaking |
 | **v0.5.0** | `/harness:resume` 본체 구현 (체크포인트 엔진) | TSGroup Portal Hub BL-304 완료 의존 |
 | **v0.6.0** | **Starter templates** (`templates/overrides-starter/`) + README 커스터마이징 가이드 | 신규 사용자 onboarding |
 | **v0.7.0** | **Evaluation criteria override** 전용 파이프라인 (L1 eval_criteria_path 활용) | 도메인 특화 합격 기준 |
@@ -230,23 +230,25 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 
 ## 5. Phase 상세 (v0.3.0 착수 기준)
 
-### P1 — userConfig 스키마 확정
+### P1 — userConfig 스키마 확정 ✅ (v0.3.0 완료, 2026-04-20)
+
+> **상세 스펙**: [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md)
 
 **작업**:
-- [ ] `plugin.json` 에 `userConfig` 4개 키 선언 (`project_name`, `bl_prefix`, `eval_criteria_path`, `harness_mode_default`)
-- [ ] 각 키 description 한/영 bilingual 주석
-- [ ] `default` 값이 있는 키는 미설정 시 fallback 검증
+- [x] `plugin.json` 에 `userConfig` 4개 키 선언 (`project_name`, `bl_prefix`, `eval_criteria_path`, `harness_mode_default`)
+- [x] 각 키 description 한국어 상세 주석
+- [x] `default` 값이 있는 키는 미설정 시 fallback 검증 (minor bump 시점 AC-3/AC-4)
 
-**수용 기준**: `claude plugin config harness` 실행 시 대화형 프롬프트로 값 수집 가능
+**수용 기준**: `claude plugin config harness` 실행 시 대화형 프롬프트로 값 수집 가능 (v0.3.0 출시 후 세션 dry run 으로 검증 예정)
 
-### P2 — SKILL.md 치환점 삽입
+### P2 — SKILL.md 치환점 삽입 ✅ (v0.3.0 완료, 2026-04-20)
 
 **작업**:
-- [ ] `skills/run/SKILL.md` 내 하드코딩 `BL-123`, `BL-456` 등을 `${user_config.bl_prefix}-023`, `${user_config.bl_prefix}-029` 등으로 전환
-- [ ] `skills/uiux/SKILL.md` 프로젝트 루트 언급 부분을 `${user_config.project_name}` 참조로 변경
-- [ ] `skills/resume/SKILL.md` 는 stub 이므로 최소 변경만
+- [x] `skills/run/SKILL.md` 내 하드코딩 `BL-123`, `BL-456` 등을 `${user_config.bl_prefix}-123/456` 으로 전환. `components/portal/` → `components/` 로 generic 화
+- [x] `skills/uiux/SKILL.md` `portal.code.myds.me:8443` 을 `your-app.example.com` (placeholder) 로 변경
+- [x] `skills/resume/SKILL.md` BL-123/BL-456/BL-999 예시를 `${user_config.bl_prefix}-*` 형태로 치환
 
-**수용 기준**: v0.2 설치에서도 fallback (BL default) 로 자연스럽게 렌더링
+**수용 기준**: v0.2 설치에서도 fallback (BL default) 로 자연스럽게 렌더링 ✅ (bl_prefix default `BL` 로 동일 결과)
 
 ### P3 — SessionStart hook 구현
 
@@ -433,6 +435,7 @@ $EDITOR .harness/overrides/agents/planner.md
 |---|---|---|---|
 | 2026-04-20 | **v1.0** | 최초 작성 — 3-레이어 아키텍처 + v0.3~v1.0 로드맵 + 7 리스크 + 6 PQG | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r2 | Executive Summary 에 "운영 모델 (1인 운영 · local-first)" 섹션 신설. §9.4 를 "Issue 라벨 컨벤션" → "개발 플로우 (로컬 우선)" 로 대체. §9.5 외부 adopter 시 거버넌스 전환 조건 신설. §6.2 KPI 를 Tier 1 (필수) / Tier 2 (외부 adopter 시) 로 분리 | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r3 | **v0.3.0 릴리즈 반영** — §5 P1/P2 체크박스 완료 처리. §4 릴리즈 로드맵에서 v0.3.0 을 ✅ 완료로 기록, v0.4.0 을 L2+L3 번들로 재편 (P3 이관). [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
 
 ---
 

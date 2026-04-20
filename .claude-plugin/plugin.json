@@ -1,9 +1,35 @@
 {
   "name": "harness",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Claude + Codex 혼합 벤더 하네스 플러그인 — /harness:run (Planner→Generator→Build Gate→Review→Evaluator→Adversarial 파이프라인), /harness:uiux (100% UI 커버리지 PDCA), /harness:resume (체크포인트 기반 자동 재개)",
   "author": {
     "name": "JangMinSeok"
+  },
+  "userConfig": {
+    "project_name": {
+      "description": "프로젝트 이름 (예: tsgroup-portal-hub, my-saas-app). SKILL 출력 문구에 삽입됨.",
+      "type": "string",
+      "default": "",
+      "sensitive": false
+    },
+    "bl_prefix": {
+      "description": "백로그/이슈 ID 접두사 (예: BL, TASK, TICKET). 기본 BL.",
+      "type": "string",
+      "default": "BL",
+      "sensitive": false
+    },
+    "eval_criteria_path": {
+      "description": "도메인 평가 기준 파일 경로 (프로젝트 루트 기준, 선택). 지정 시 Evaluator 가 추가 로드.",
+      "type": "string",
+      "default": "",
+      "sensitive": false
+    },
+    "harness_mode_default": {
+      "description": "기본 실행 모드 (lite | standard | pro | ultra). 미지정 시 standard.",
+      "type": "string",
+      "default": "standard",
+      "sensitive": false
+    }
   },
   "license": "MIT",
   "keywords": [

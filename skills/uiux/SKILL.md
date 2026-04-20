@@ -124,7 +124,7 @@ trigger-patterns:
 1. 프로젝트 루트 확인: `${CLAUDE_PROJECT_DIR}`
 2. 서버/배포 대상 확인:
    - 로컬: `curl -sf http://localhost:8090/api/health > /dev/null`
-   - 배포: `HARNESS_BASE_URL=https://portal.code.myds.me:8443` 지정 시 원격 대상
+   - 배포: `HARNESS_BASE_URL=https://your-app.example.com` 지정 시 원격 대상
 3. 카탈로그 존재 확인: `web/e2e/.harness/catalog/ui-primitives.json`
 4. **① Inventory**:
    ```bash

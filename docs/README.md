@@ -9,13 +9,13 @@
 | 문서 | 설명 | 상태 |
 |---|---|---|
 | [PLAN-v1.0.md](./PLAN-v1.0.md) | **하네스 개선 프로젝트 SSOT** — 3-레이어 아키텍처, v0.3~v1.0 릴리즈 로드맵, 품질 게이트, 리스크 | 🟢 Active |
+| [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) | v0.3.0 P1 상세 스펙 — userConfig 4키 스키마 + 7개 치환점 규약 + 수용 기준 | ✅ 완료 (2026-04-20) |
 
 ### Phase 세부 스펙 (필요 시 생성)
 
 아래 문서들은 본 플랜의 phase 가 진행됨에 따라 추가된다.
 
-- `PHASE-P1-userConfig.md` — P1 phase 상세 스펙 (v0.3.0)
-- `PHASE-P3-session-start-hook.md` — P3 hook 구현 스펙 (v0.3.0)
+- `PHASE-P3-session-start-hook.md` — P3 hook 구현 스펙 (v0.4.0 예정)
 - `MIGRATION-v0.2-to-v0.3.md` — v0.2 → v0.3 마이그레이션 가이드 (P5)
 - `MIGRATION-v0.3-to-v0.4.md` — 호환성 게이트 발동 시 참조 (v0.4.0)
 
