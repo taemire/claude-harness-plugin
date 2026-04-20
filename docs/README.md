@@ -9,8 +9,9 @@
 | 문서 | 설명 | 상태 |
 |---|---|---|
 | [PLAN-v1.0.md](./PLAN-v1.0.md) | **하네스 개선 프로젝트 SSOT** — 3-레이어 아키텍처, v0.3~v1.0 릴리즈 로드맵, 품질 게이트, 리스크 | 🟢 Active |
-| [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) | v0.3.0 P1 상세 스펙 — userConfig 4키 스키마 + 7개 치환점 규약 + 수용 기준 | ✅ 완료 (2026-04-20) |
-| [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) | v0.4.0 P3 상세 스펙 — SessionStart hook (L2 link-farm + L3 semver 게이트) + AC 7 + 리스크 6 | ✅ 완료 (2026-04-20) |
+| [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) | v0.3.0 P1 상세 스펙 (v1) — userConfig 4키 스키마 + 7개 치환점 규약 + 수용 기준 | ✅ 완료 (2026-04-20) · v0.5.0 에서 P1 v2 로 격상 |
+| [PHASE-P1-v2-config-yaml.md](./PHASE-P1-v2-config-yaml.md) | v0.5.0 P1 v2 상세 스펙 — `.harness/config.yaml` 프로젝트 SSOT + 3단 cascade + SKILL env 치환 | ✅ 완료 (2026-04-20) |
+| [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) | v0.4.0 P3 상세 스펙 — SessionStart hook (L2 link-farm + L3 semver 게이트) + AC 7 + 리스크 6 | ✅ 완료 (2026-04-20, v0.5.0 에서 L0 config loader 추가) |
 | [schemas/override-manifest.schema.json](./schemas/override-manifest.schema.json) | override-manifest.json JSON Schema (draft-07) | ✅ 활성 (v0.4.0~) |
 
 ### Phase 세부 스펙 (필요 시 생성)

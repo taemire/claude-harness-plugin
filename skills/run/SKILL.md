@@ -30,11 +30,11 @@ Claude는 Plan/FE/Arbit, Codex는 Plan Review/BE/Cross-Review를 담당합니다
 /harness:run "릴리즈 다운로드 카드 UI 개선"    ← 자동 감지
 /harness:run "파트너사 계약 만료 알림 시스템"  ← 자동 감지
 /harness:run "파트너사 계약 만료 알림 시스템" --mode=pro --codex  ← Codex 강제 활성
-/harness:run "${user_config.bl_prefix}-123 sample infra feature" --codex --codex-level=pro    ← Standard 모드 + Codex Pro 검토
+/harness:run "${HARNESS_BL_PREFIX:-BL}-123 sample infra feature" --codex --codex-level=pro    ← Standard 모드 + Codex Pro 검토
 /harness:run "전수 테스트" --type=qa            ← QA 전수 테스트
 /harness:run --type=qa --scope=module:release   ← 모듈별 QA
 /harness:run --type=qa --mode=sweep             ← 전체 sweep
-/harness:run "${user_config.bl_prefix}-456 sample auth feature" --mode=ultra      ← 전 단계 Opus, 한 번에 고품질
+/harness:run "${HARNESS_BL_PREFIX:-BL}-456 sample auth feature" --mode=ultra      ← 전 단계 Opus, 한 번에 고품질
 /harness:run "복잡한 인증 시스템" --mode=ultra --codex  ← Ultra + Codex 강제
 ```
 

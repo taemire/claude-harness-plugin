@@ -60,13 +60,13 @@ argument-hint: "[--bl-id=BL-NNN] [--force] [--dry-run]"
 ```bash
 /harness:resume
 # → latest paused checkpoint 자동 탐색
-# → ${user_config.bl_prefix}-123, current_phase=evaluator, resume_attempts=0
+# → ${HARNESS_BL_PREFIX:-BL}-123, current_phase=evaluator, resume_attempts=0
 # → 스냅샷 복원, evaluator 부터 재개
 
-/harness:resume --bl-id=${user_config.bl_prefix}-456 --dry-run
+/harness:resume --bl-id=${HARNESS_BL_PREFIX:-BL}-456 --dry-run
 # → 복원만 수행, next_phase 리포트
 
-/harness:resume --bl-id=${user_config.bl_prefix}-999 --force
+/harness:resume --bl-id=${HARNESS_BL_PREFIX:-BL}-999 --force
 # → 7일 이상 오래된 stale 체크포인트 강제 재개
 ```
 

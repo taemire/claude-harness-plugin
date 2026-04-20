@@ -1,5 +1,27 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.5.0] — 2026-04-20
+
+### Added — `.harness/config.yaml` 프로젝트 설정 SSOT (P1 v2 완료)
+- `hooks/session-start.sh` 에 **L0 config loader** 추가
+  - `${CLAUDE_PROJECT_DIR}/.harness/config.yaml` 읽어 `HARNESS_*` 환경 변수로 export (via `CLAUDE_ENV_FILE`)
+  - 순수 bash YAML 파서 내장 — 외부 의존성(PyYAML, yq) 없이 flat `harness:` 블록 파싱
+  - 3단 cascade: L0 `.harness/config.yaml` > L1 `.claude/settings.json` pluginConfigs > L2 `plugin.json.userConfig.<key>.default`
+  - fail-open: yaml 없거나 malformed 시 silent 통과
+- `templates/config.yaml.example` — starter 템플릿 (schema_version + harness + custom 섹션)
+- `docs/PHASE-P1-v2-config-yaml.md` — 상세 스펙 (스키마 + cascade + AC 6 + 리스크 5)
+
+### Changed — SKILL.md 치환 규약 전환
+- `skills/run/SKILL.md` L33, L37: `${user_config.bl_prefix}-*` → `${HARNESS_BL_PREFIX:-BL}-*`
+- `skills/resume/SKILL.md` L63, L66, L69: 동일 치환 3곳
+- `:-BL` fallback 으로 env 미설정 환경에서 v0.4.x 와 **동일 출력** 보장
+
+### Notes
+- **Non-breaking minor bump** — `.harness/config.yaml` 없는 기존 프로젝트 영향 없음
+- Claude Code pluginConfigs (UI 입력) 경로는 유지 — 일부 사용자가 선호할 경우 병행 가능
+- **Portal Hub 이식** 은 이번 릴리즈 기반 위에서 진행 (`.harness/config.yaml` 작성 + override agents 배치)
+- **실측 절차**: 새 세션 시작 → stdout 에 `⚙️ config loaded from .harness/config.yaml` + `exported: HARNESS_* ...` 확인
+
 ## [0.4.4] — 2026-04-20
 
 ### Fixed — 슬래시 커맨드 이중 네임스페이스 (BL-307 후속)

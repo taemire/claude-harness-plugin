@@ -213,6 +213,7 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 | **v0.2.0** (완료) | `.harness/` 경로 통일 + plugin.json SSOT 확정 | ✅ 2026-04-20 릴리즈 |
 | **v0.3.0** (완료) | **L1 변수 주입 레이어 (P1+P2)** — userConfig 4키 + SKILL.md 치환점 | ✅ 2026-04-20 릴리즈 (P3 는 v0.4.0 로 이관) |
 | **v0.4.0** (완료) | **L2 Agent Replace 레이어 + L3 호환성 게이트** (P3 SessionStart hook + link-farm + semver check) | ✅ 2026-04-20 릴리즈 |
+| **v0.5.0** (완료) | **P1 v2 — `.harness/config.yaml` 프로젝트 SSOT** (L0 config loader + 3단 cascade + SKILL.md env 치환) | ✅ 2026-04-20 릴리즈 |
 | **v0.5.0** | `/harness:resume` 본체 구현 (체크포인트 엔진) | TSGroup Portal Hub BL-304 완료 의존 |
 | **v0.6.0** | **Starter templates** (`templates/overrides-starter/`) + README 커스터마이징 가이드 | 신규 사용자 onboarding |
 | **v0.7.0** | **Evaluation criteria override** 전용 파이프라인 (L1 eval_criteria_path 활용) | 도메인 특화 합격 기준 |
@@ -443,6 +444,7 @@ $EDITOR .harness/overrides/agents/planner.md
 | 2026-04-20 | v1.0-r3 | **v0.3.0 릴리즈 반영** — §5 P1/P2 체크박스 완료 처리. §4 릴리즈 로드맵에서 v0.3.0 을 ✅ 완료로 기록, v0.4.0 을 L2+L3 번들로 재편 (P3 이관). [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r4 | **v0.4.0 릴리즈 반영** — §5 P3 체크박스 완료. §4 v0.4.0 ✅. hooks/session-start.sh + override-manifest JSON Schema + [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r5 | **v0.4.1 hotfix 반영** — v0.4.0 의 hook 등록 형식이 Claude Code 공식 스펙과 불일치(스칼라 vs 배열+matcher+type) 하여 트리거 불가. `hooks/hooks.json` 분리 + matcher `startup`/`resume` 등록. PHASE-P3 §2.1 재작성 (v1.1) | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r6 | **v0.5.0 P1 v2 반영** — `.harness/config.yaml` 을 프로젝트 설정 1차 SSOT 로 격상. L0 config loader 추가, SKILL.md 치환을 `${user_config.*}` → `${HARNESS_*:-default}` 로 전환. §3.1 에 3단 cascade 추가. [PHASE-P1-v2-config-yaml.md](./PHASE-P1-v2-config-yaml.md) 신규 | @JangMinSeok (Claude-assisted) |
 
 ---
 

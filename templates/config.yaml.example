@@ -1,0 +1,28 @@
+# claude-harness-plugin — 프로젝트 설정 SSOT
+# 이 파일을 ${프로젝트 루트}/.harness/config.yaml 로 복사한 뒤 프로젝트 값으로 편집하세요.
+# 참조: https://github.com/taemire/claude-harness-plugin/blob/main/docs/PHASE-P1-v2-config-yaml.md
+
+schema_version: "1.0"
+
+# plugin.json userConfig 스펙을 미러링하는 섹션
+# SessionStart hook 이 아래 키들을 HARNESS_<KEY> 환경 변수로 export 합니다.
+harness:
+  # 프로젝트 식별자 (SKILL 출력 문구에 삽입)
+  project_name: my-project
+
+  # 백로그/이슈 ID 접두사. 예: BL → "BL-123", TASK → "TASK-123"
+  bl_prefix: BL
+
+  # 도메인 평가 기준 파일 경로 (프로젝트 루트 기준, 선택)
+  # 지정 시 Evaluator agent 가 추가로 로드합니다.
+  eval_criteria_path: ""
+
+  # 기본 실행 모드: lite | standard | pro | ultra
+  harness_mode_default: standard
+
+# 프로젝트 고유 확장 설정 (자유 형식, v0.6+ 에서 자동 export 지원 예정)
+# 현재 v0.5.0 에서는 문서화 용도. 향후 HARNESS_CUSTOM_<KEY> 로 export 예정.
+custom:
+  # 예시:
+  # ui_layers: 5
+  # qg_min_coverage: 95
