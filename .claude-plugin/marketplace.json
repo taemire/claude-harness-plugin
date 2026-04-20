@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Claude + Codex 혼합 벤더 하네스 플러그인 로컬 마켓플레이스",
-    "version": "0.4.3"
+    "version": "0.4.4"
   },
   "plugins": [
     {
       "name": "harness",
       "source": "./",
       "description": "/harness:run · /harness:uiux · /harness:resume 슬래시 커맨드 + 스킬 번들 (체크포인트 기반 자동 재개 포함)",
-      "version": "0.4.3",
+      "version": "0.4.4",
       "category": "workflow",
       "keywords": [
         "harness",

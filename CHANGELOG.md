@@ -1,5 +1,28 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.4.4] — 2026-04-20
+
+### Fixed — 슬래시 커맨드 이중 네임스페이스 (BL-307 후속)
+- v0.4.3 에서 `commands/harness/{run,uiux,resume}.md` 서브디렉토리 구조로 배포했으나 Claude Code 의 command 네임스페이스 규칙에 따라 **이중 프리픽스** 적용됨:
+  - 의도: `/harness:run` (plugin 이름 + 파일 이름)
+  - 실측: `/harness:harness:run` (plugin 이름 + 서브디렉토리 이름 + 파일 이름)
+  - 추가 증상: 같은 스킬들이 `/run`, `/uiux`, `/resume` 으로 프리픽스 없이 중복 노출. `/harness` 자동완성 시 6개 중복 항목 표시
+- v0.4.4 에서 `commands/` 하위로 flatten:
+  - `commands/harness/run.md`    → `commands/run.md`
+  - `commands/harness/uiux.md`   → `commands/uiux.md`
+  - `commands/harness/resume.md` → `commands/resume.md`
+- 결과: `/harness:run`, `/harness:uiux`, `/harness:resume` 3개 정상 노출. 중복/이중 프리픽스 해소
+
+### Notes
+- command shim 내용은 변경 없음 (스킬 `harness:run` 위임 + 프리플라이트 지시 유지)
+- **실측 절차**: `/plugin update harness` → 캐시 0.4.4 동기화 → 신규 세션 시작 → `/harness` 입력 시 `/harness:run · /harness:uiux · /harness:resume` 3개만 노출 확인
+- v0.4.3 는 effectively yanked (이중 네임스페이스로 인해 사용자 경험 손상). 단 v0.4.3 의 `commands/` 도입 자체는 올바른 방향이었으므로 완전 롤백 대신 구조만 수정
+
+### Retrospective — v0.4.2 CHANGELOG 엔트리 소급 기록
+- v0.4.2 (2026-04-20) 커밋 `a16b4b6` 이 `plugin.json` `userConfig.<key>.title` 필드 추가(hotfix)만 수행하고 CHANGELOG 엔트리를 남기지 않음. 본 릴리즈 시점에 소급 기록:
+  - **Fixed**: Claude Code plugin spec 이 각 `userConfig` 엔트리에 `title` (string) 필수로 요구. 누락 시 `/plugin install` manifest validation 실패. project_name / bl_prefix / eval_criteria_path / harness_mode_default 4 필드에 한글 title 추가
+  - 이후 CHANGELOG 는 모든 릴리즈에 블록 누락 없이 기록 (거버넌스 §9.3 재확인)
+
 ## [0.4.3] — 2026-04-20
 
 ### Fixed — 슬래시 커맨드 미노출 (BL-307)
