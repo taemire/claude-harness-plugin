@@ -273,10 +273,113 @@ do_link_farm() {
 }
 
 # ─────────────────────────────────────────────────────────
+# [4] L0' — per-session config override (v0.6 / P1-7)
+# ─────────────────────────────────────────────────────────
+#
+# .harness/session-<session-id>.yaml 이 존재하면 공유 config.yaml 위에 덮어쓴다.
+# (per-session 임시 모드/BL-ID lock 등)
+load_session_override() {
+  local sid="${CLAUDE_SESSION_ID:-}"
+  [ -z "$sid" ] && return 0
+  local sess_cfg="${CLAUDE_PROJECT_DIR}/.harness/session-${sid}.yaml"
+  [ -f "$sess_cfg" ] || return 0
+
+  # config.yaml 과 동일한 파서 재사용 — 단순히 HARNESS_CONFIG 를 치환 후 재호출
+  local saved_config="$HARNESS_CONFIG"
+  HARNESS_CONFIG="$sess_cfg"
+  load_harness_config  # 같은 bash YAML 파서로 덮어쓰기
+  HARNESS_CONFIG="$saved_config"
+
+  if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
+    echo "[harness plugin] 📦 per-session override applied: .harness/session-${sid}.yaml"
+  fi
+}
+
+# ─────────────────────────────────────────────────────────
+# [5] L4 — session registry register (v0.6 / P0-2)
+# ─────────────────────────────────────────────────────────
+register_active_session() {
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local registry="${script_dir}/../common/session-registry.sh"
+  [ -x "$registry" ] || return 0
+  "$registry" prune >/dev/null 2>&1 || true
+  local bl="${HARNESS_BL_ID:-unscoped}"
+  "$registry" register "$bl" "starting" >/dev/null 2>&1 || true
+}
+
+# ─────────────────────────────────────────────────────────
+# [6] L5 — multi-session preflight (v0.6 / HARNESS-MSC-001)
+# ─────────────────────────────────────────────────────────
+preflight_multi_session() {
+  local script_dir
+  script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local registry="${script_dir}/../common/session-registry.sh"
+  [ -x "$registry" ] || return 0
+
+  # [6a] 타세션 감지 (jq 있을 때만 정밀)
+  if command -v jq >/dev/null 2>&1; then
+    local others; others=$("$registry" others 2>/dev/null)
+    if [ -n "$others" ] && [ "$others" != "[]" ]; then
+      local count; count=$(echo "$others" | jq 'length' 2>/dev/null || echo 0)
+      if [ "${count:-0}" -gt 0 ]; then
+        echo "[harness plugin] ⚠️  multi-session detected (N=${count})"
+        echo "$others" | jq -r '.[] | "  · \(.session_id) (\(.profile)) · bl_id=\(.bl_id // "—") · phase=\(.phase // "—") · heartbeat=\(.last_heartbeat)"' 2>/dev/null
+        echo "  policy: PHASE-P7 §3.2 · override-manifest.json compatible_base_version ~0.6"
+      fi
+    fi
+  fi
+
+  # [6b] 최근 .harness/<type>/ 쓰기 감지 (< 10분)
+  local stale="${HARNESS_SESSION_STALE_SECONDS:-600}"
+  local now_s; now_s=$(date +%s)
+  local cutoff_s=$(( now_s - stale ))
+  local cutoff_iso
+  cutoff_iso=$(date -r "$cutoff_s" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || date -d "@$cutoff_s" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || echo "")
+  if [ -n "$cutoff_iso" ]; then
+    local hits=""
+    local dir
+    for dir in feature ui generic; do
+      local harness_dir="${CLAUDE_PROJECT_DIR}/.harness/${dir}"
+      [ -d "$harness_dir" ] || continue
+      local found
+      found=$(find "$harness_dir" -maxdepth 3 -type f \( -name "SPEC.md" -o -name "SELF_CHECK*.md" -o -name "QA_REPORT*.md" -o -name "SPRINT_CONTRACT.md" \) -newermt "$cutoff_iso" 2>/dev/null | head -5)
+      [ -n "$found" ] && hits="${hits}${found}\n"
+    done
+    if [ -n "$hits" ]; then
+      echo "[harness plugin] ⚠️  recent harness writes (< ${stale}s):"
+      printf '%b' "$hits" | sed 's|^|  · |'
+    fi
+  fi
+
+  # [6c] archive-restore drift 감지 (SPEC.md == archive/*.md 바이트 동일)
+  local dir
+  for dir in feature ui generic; do
+    local spec="${CLAUDE_PROJECT_DIR}/.harness/${dir}/SPEC.md"
+    local archive_dir="${CLAUDE_PROJECT_DIR}/.harness/${dir}/archive"
+    [ -f "$spec" ] || continue
+    [ -d "$archive_dir" ] || continue
+    local arc
+    while IFS= read -r arc; do
+      [ -f "$arc" ] || continue
+      if cmp -s "$spec" "$arc" 2>/dev/null; then
+        echo "[harness plugin] 🚨 SPEC drift suspect"
+        echo "  .harness/${dir}/SPEC.md  ==  ${arc#${CLAUDE_PROJECT_DIR}/}  (bytes identical)"
+        echo "  hint: another session may have restored archive over active SPEC"
+        echo "  remediation: git log -p -- .harness/${dir}/SPEC.md"
+      fi
+    done < <(find "$archive_dir" -maxdepth 3 -type f -name "SPEC*.md" 2>/dev/null | head -20)
+  done
+}
+
+# ─────────────────────────────────────────────────────────
 # 메인 흐름
 # ─────────────────────────────────────────────────────────
-load_harness_config   # L0 — config.yaml → HARNESS_* env
-check_semver_compat   # L3 — override-manifest semver 검사
-do_link_farm          # L2 — agents/ → .claude/agents/ link-farm
+load_harness_config      # L0  — config.yaml → HARNESS_* env
+load_session_override    # L0' — session-<id>.yaml 덮어쓰기 (v0.6)
+check_semver_compat      # L3  — override-manifest semver 검사
+do_link_farm             # L2  — agents/ → .claude/agents/ link-farm
+register_active_session  # L4  — active-sessions.json (v0.6)
+preflight_multi_session  # L5  — multi-session 경고 출력 (v0.6)
 
 exit 0
