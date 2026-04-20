@@ -215,10 +215,10 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 | **v0.4.0** (완료) | **L2 Agent Replace 레이어 + L3 호환성 게이트** (P3 SessionStart hook + link-farm + semver check) | ✅ 2026-04-20 릴리즈 |
 | **v0.5.0** (완료) | **P1 v2 — `.harness/config.yaml` 프로젝트 SSOT** (L0 config loader + 3단 cascade + SKILL.md env 치환) | ✅ 2026-04-20 릴리즈 |
 | **v0.5.0** | `/harness:resume` 본체 구현 (체크포인트 엔진) | TSGroup Portal Hub BL-304 완료 의존 |
-| **v0.6.0** | **Starter templates** (`templates/overrides-starter/`) + README 커스터마이징 가이드 | 신규 사용자 onboarding |
-| **v0.7.0** | **Evaluation criteria override** 전용 파이프라인 (L1 eval_criteria_path 활용) | 도메인 특화 합격 기준 |
-| **v0.8.0** | **Cross-project migration tool** — 기존 portal-harness user-skill 을 overrides 로 자동 변환 | deprecation 마무리 |
-| **v0.9.0** | **Telemetry opt-in** (선택) — 사용자 동의 시 사용 패턴 수집 | 데이터 기반 개선 |
+| **v0.6.0** | **Multi-Session Hardening (P7)** — BL-ID 네임스페이스 격리, session registry, atomic-write, seed/restore 가드, config 분리, per-session codex socket | Portal Hub BL-306 실측 대응 (HARNESS-MSC-001) |
+| **v0.7.0** | **Starter templates** (`templates/overrides-starter/`) + README 커스터마이징 가이드 | 신규 사용자 onboarding (v0.6 에서 이관) |
+| **v0.8.0** | **Evaluation criteria override** 전용 파이프라인 (L1 eval_criteria_path 활용) | 도메인 특화 합격 기준 (v0.7 에서 이관) |
+| **v0.9.0** | **Cross-project migration tool** — 기존 portal-harness user-skill 을 overrides 로 자동 변환 · Telemetry opt-in (선택) | deprecation 마무리 + 데이터 기반 개선 |
 | **v1.0.0** | **GA release** — API 안정화, 파괴적 변경 동결, semver major 약속 | Anthropic 공식 마켓플레이스 등록 검토 |
 
 ### 4.1 버전 별 Non-goal
@@ -297,6 +297,21 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 - [ ] FAQ (override 파일이 gitignore 되는가? base version bump 시 어떻게 되는가?)
 
 **수용 기준**: GitHub README 만 보고도 override 설계 이해 가능
+
+### P7 — Multi-Session Hardening (v0.6.0 신규, 2026-04-20)
+
+> **상세 스펙**: [PHASE-P7-multi-session-hardening.md](./PHASE-P7-multi-session-hardening.md)
+> **근거**: Portal Hub BL-306 세션 silent overwrite 실측 (2026-04-20)
+
+**작업**:
+- [ ] **P0-1** BL-ID 네임스페이스 격리 — `.harness/<type>/<BL-ID>/SPEC.md`
+- [ ] **P0-2** Session registry 플러그인 내장 — `common/session-registry.sh` + hook 통합
+- [ ] **P0-3** Atomic-write helper — `common/atomic-write.sh` (tmp→rename)
+- [ ] **P0-4** Seed/restore 가드 — `common/seed-guard.sh` + `templates/<type>/`
+- [ ] **P1-7** config.yaml 분리 — `.harness/session-<id>.yaml` override
+- [ ] **P1-8** Codex per-session socket — `common/codex-socket.sh`
+
+**수용 기준**: PHASE-P7 §5 AC-1~10 전부 PASS. Portal Hub HARNESS-MSC-001 정책과 integration 검증.
 
 ---
 
@@ -445,7 +460,8 @@ $EDITOR .harness/overrides/agents/planner.md
 | 2026-04-20 | v1.0-r4 | **v0.4.0 릴리즈 반영** — §5 P3 체크박스 완료. §4 v0.4.0 ✅. hooks/session-start.sh + override-manifest JSON Schema + [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r5 | **v0.4.1 hotfix 반영** — v0.4.0 의 hook 등록 형식이 Claude Code 공식 스펙과 불일치(스칼라 vs 배열+matcher+type) 하여 트리거 불가. `hooks/hooks.json` 분리 + matcher `startup`/`resume` 등록. PHASE-P3 §2.1 재작성 (v1.1) | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r6 | **v0.5.0 P1 v2 반영** — `.harness/config.yaml` 을 프로젝트 설정 1차 SSOT 로 격상. L0 config loader 추가, SKILL.md 치환을 `${user_config.*}` → `${HARNESS_*:-default}` 로 전환. §3.1 에 3단 cascade 추가. [PHASE-P1-v2-config-yaml.md](./PHASE-P1-v2-config-yaml.md) 신규 | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r7 | **v0.6.0 P7 Multi-Session Hardening 신설** — §4 로드맵에서 v0.6 을 "Starter templates" → "Multi-Session Hardening" 으로 재배정. "Starter templates" 는 v0.7 로 이관. §5 에 P7 phase 추가. [PHASE-P7-multi-session-hardening.md](./PHASE-P7-multi-session-hardening.md) 신규. Portal Hub BL-306 실측 (HARNESS-MSC-001) 대응 | @JangMinSeok (Claude-assisted) |
 
 ---
 
-> 다음 액션: v0.3.0 P1 (userConfig 스키마 확정) 착수 — 별도 PR 로 진행.
+> 다음 액션: v0.6.0 P7 구현 (feature/v0.6-multi-session-hardening 브랜치) — atomic commits.
