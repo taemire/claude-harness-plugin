@@ -1,5 +1,24 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.4.1] — 2026-04-20
+
+### Fixed — hotfix: 공식 hook 스펙 준수
+- v0.4.0 의 hook 등록이 Claude Code 공식 규격과 불일치하여 런타임에서 트리거되지 않음. 공식 가이드 재확인 후 전면 재배선:
+  - ❌ v0.4.0: `plugin.json.hooks.SessionStart = "hooks/session-start.sh"` (스칼라, plugin.json 내부)
+  - ✅ v0.4.1: 신규 `hooks/hooks.json` — `{ description, hooks: { SessionStart: [{matcher, hooks:[{type, command, timeout}]}] } }` (배열, `${CLAUDE_PLUGIN_ROOT}` 기준 절대경로, `type: "command"` + `timeout: 30`)
+  - matcher 2개 등록: `startup` (신규 세션) + `resume` (`--resume` / `--continue` / `/resume`). `/clear`, `compact` 는 이미 link-farm 구성된 상태라 재실행 불필요
+
+### Removed
+- `.claude-plugin/plugin.json` 의 `hooks` 필드 제거 (스펙 오류로 무효)
+
+### Added
+- `hooks/hooks.json` — Claude Code 공식 plugin hook 스펙 준수 형태
+
+### Notes
+- **실측 절차**: `/plugin update harness` 또는 Claude 세션 재시작 → 캐시 0.4.1 동기화 → `.harness/overrides/agents/*.md` 더미 파일 배치 → 새 세션 시작 → stdout 에 `✅ link-farm configured` 확인
+- 공식 hook 스펙 참조: https://code.claude.com/docs/en/hooks (SessionStart matchers: startup / resume / clear / compact)
+- v0.4.0 는 **yanked** 로 간주 (동일 태그에서 런타임 트리거 불가). v0.4.1 을 최소 기능 버전으로 사용할 것
+
 ## [0.4.0] — 2026-04-20
 
 ### Added

@@ -442,6 +442,7 @@ $EDITOR .harness/overrides/agents/planner.md
 | 2026-04-20 | v1.0-r2 | Executive Summary 에 "운영 모델 (1인 운영 · local-first)" 섹션 신설. §9.4 를 "Issue 라벨 컨벤션" → "개발 플로우 (로컬 우선)" 로 대체. §9.5 외부 adopter 시 거버넌스 전환 조건 신설. §6.2 KPI 를 Tier 1 (필수) / Tier 2 (외부 adopter 시) 로 분리 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r3 | **v0.3.0 릴리즈 반영** — §5 P1/P2 체크박스 완료 처리. §4 릴리즈 로드맵에서 v0.3.0 을 ✅ 완료로 기록, v0.4.0 을 L2+L3 번들로 재편 (P3 이관). [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r4 | **v0.4.0 릴리즈 반영** — §5 P3 체크박스 완료. §4 v0.4.0 ✅. hooks/session-start.sh + override-manifest JSON Schema + [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r5 | **v0.4.1 hotfix 반영** — v0.4.0 의 hook 등록 형식이 Claude Code 공식 스펙과 불일치(스칼라 vs 배열+matcher+type) 하여 트리거 불가. `hooks/hooks.json` 분리 + matcher `startup`/`resume` 등록. PHASE-P3 §2.1 재작성 (v1.1) | @JangMinSeok (Claude-assisted) |
 
 ---
 

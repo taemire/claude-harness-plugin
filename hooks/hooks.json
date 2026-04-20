@@ -1,0 +1,27 @@
+{
+  "description": "claude-harness-plugin — SessionStart hook for L2 Agent Replace (link-farm) + L3 semver compat gate. 참조: docs/PHASE-P3-session-start-hook.md",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

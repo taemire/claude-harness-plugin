@@ -31,17 +31,43 @@
 
 ## 2. 디자인
 
-### 2.1 hook 등록 (plugin.json)
+### 2.1 hook 등록 (hooks/hooks.json, v0.4.1~)
+
+> ⚠️ **v0.4.0 스펙 오류 수정 (2026-04-20)**: 초기 v0.4.0 은 `plugin.json.hooks` 필드에 스칼라 형태로 등록했으나 Claude Code 공식 스펙과 불일치하여 런타임 트리거되지 않음. v0.4.1 에서 공식 규격으로 전면 재배선.
+
+공식 규격: **별도 `hooks/hooks.json` 파일**에 배열 구조로 등록. `plugin.json` 에는 hook 필드 없음.
 
 ```json
 {
+  "description": "SessionStart hook for L2 link-farm + L3 semver gate",
   "hooks": {
-    "SessionStart": "hooks/session-start.sh"
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "resume",
+        "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh", "timeout": 30 }]
+      }
+    ]
   }
 }
 ```
 
-Claude Code 가 세션 시작 시 이 스크립트를 실행한다. stdout 은 Claude 컨텍스트에 주입되고, exit code 는 무시된다 (fail-open 확정).
+**매처 선택 근거**:
+- `startup` (신규 세션) — 필수. 첫 세션 진입 시 link-farm + semver 검사 수행
+- `resume` (`--resume` / `--continue` / `/resume`) — 필수. 프로젝트 컨텍스트 재설정이므로 link-farm 재검증 필요
+- `clear` (`/clear`) — 제외. 같은 세션 내 컨텍스트 클리어일 뿐, 파일시스템 상태 변화 없음
+- `compact` (자동/수동 compaction) — 제외. 컨텍스트 압축만 — 파일시스템 변화 없음
+
+Claude Code 는 stdout 을 Claude 컨텍스트에 주입하고, exit code 는 무시된다 (fail-open 확정). `timeout: 30` 초과 시 hook 종료 (fail-open 유지).
 
 ### 2.2 실행 환경
 
@@ -224,3 +250,4 @@ hook 실행 시 사용 가능한 환경 변수:
 | 일자 | 변경 |
 |:--|:--|
 | 2026-04-20 | v1.0 최초 작성 — SessionStart hook 설계 + override-manifest 스키마 + AC 7 + 리스크 6 |
+| 2026-04-20 | v1.1 hotfix retrospective — v0.4.0 hook 등록 형식 오류 발견 후 §2.1 공식 규격(`hooks/hooks.json` 배열 구조 + matcher + type/command/timeout) 으로 재작성. matcher 선정 근거 명시. v0.4.1 에서 반영. |
