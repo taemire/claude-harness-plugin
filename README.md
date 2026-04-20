@@ -67,7 +67,9 @@ claude-harness-plugin/
 
 ## 상태
 
-- **v0.2.0 (2026-04-20)**: `.harness/` 경로 통일 (BL-305) + VERSION SSOT 도입 + marketplace.json 번들링
+- **v0.4.0 (2026-04-20)**: L2 Agent Replace + L3 호환성 게이트 — SessionStart hook, link-farm, semver check
+- **v0.3.0 (2026-04-20)**: L1 변수 주입 레이어 — userConfig 4키 + SKILL.md 치환점
+- **v0.2.0 (2026-04-20)**: `.harness/` 경로 통일 (BL-305) + plugin.json SSOT 확정 + marketplace.json 번들링
 - **v0.1.0 (2026-04-19)**: 초기 스켈레톤 + 기존 2개 스킬 이전 + `resume` stub
 
 ## 버전 SSOT 규칙
@@ -84,8 +86,8 @@ claude-harness-plugin/
 |:--|:--|
 | **v0.1.x** (완료) | 스켈레톤, run/uiux 이전, resume stub |
 | **v0.2.x** (완료) | `.harness/` 경로 통일, plugin.json SSOT 확정, marketplace 번들링 |
-| **v0.3.x** | L1 변수 주입 레이어 (`userConfig`) + L3 호환성 게이트 |
-| **v0.4.x** | L2 Agent Replace 레이어 (SessionStart hook + link-farm) |
+| **v0.3.x** (완료) | L1 변수 주입 레이어 — userConfig 4키 + SKILL.md 치환점 |
+| **v0.4.x** (완료) | L2 Agent Replace + L3 호환성 게이트 — SessionStart hook + link-farm + semver check |
 | **v0.5.x** | `/harness:resume` 본체 구현 (체크포인트 엔진) |
 | **v0.6.x** | Starter templates + 커스터마이징 가이드 강화 |
 | **v1.0.x** | API stable lock-in, Anthropic 공식 마켓플레이스 등록 검토 |

@@ -10,14 +10,16 @@
 |---|---|---|
 | [PLAN-v1.0.md](./PLAN-v1.0.md) | **하네스 개선 프로젝트 SSOT** — 3-레이어 아키텍처, v0.3~v1.0 릴리즈 로드맵, 품질 게이트, 리스크 | 🟢 Active |
 | [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) | v0.3.0 P1 상세 스펙 — userConfig 4키 스키마 + 7개 치환점 규약 + 수용 기준 | ✅ 완료 (2026-04-20) |
+| [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) | v0.4.0 P3 상세 스펙 — SessionStart hook (L2 link-farm + L3 semver 게이트) + AC 7 + 리스크 6 | ✅ 완료 (2026-04-20) |
+| [schemas/override-manifest.schema.json](./schemas/override-manifest.schema.json) | override-manifest.json JSON Schema (draft-07) | ✅ 활성 (v0.4.0~) |
 
 ### Phase 세부 스펙 (필요 시 생성)
 
 아래 문서들은 본 플랜의 phase 가 진행됨에 따라 추가된다.
 
-- `PHASE-P3-session-start-hook.md` — P3 hook 구현 스펙 (v0.4.0 예정)
 - `MIGRATION-v0.2-to-v0.3.md` — v0.2 → v0.3 마이그레이션 가이드 (P5)
 - `MIGRATION-v0.3-to-v0.4.md` — 호환성 게이트 발동 시 참조 (v0.4.0)
+- `PHASE-P4-starter-templates.md` — P4 starter template 스펙 (v0.6.0 예정)
 
 ### 문서 작성 규칙
 

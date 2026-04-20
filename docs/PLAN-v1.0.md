@@ -212,7 +212,7 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 |:--|:--|:--|
 | **v0.2.0** (완료) | `.harness/` 경로 통일 + plugin.json SSOT 확정 | ✅ 2026-04-20 릴리즈 |
 | **v0.3.0** (완료) | **L1 변수 주입 레이어 (P1+P2)** — userConfig 4키 + SKILL.md 치환점 | ✅ 2026-04-20 릴리즈 (P3 는 v0.4.0 로 이관) |
-| **v0.4.0** | **L2 Agent Replace 레이어 + L3 호환성 게이트** (P3 SessionStart hook + link-farm + semver check) | Non-breaking |
+| **v0.4.0** (완료) | **L2 Agent Replace 레이어 + L3 호환성 게이트** (P3 SessionStart hook + link-farm + semver check) | ✅ 2026-04-20 릴리즈 |
 | **v0.5.0** | `/harness:resume` 본체 구현 (체크포인트 엔진) | TSGroup Portal Hub BL-304 완료 의존 |
 | **v0.6.0** | **Starter templates** (`templates/overrides-starter/`) + README 커스터마이징 가이드 | 신규 사용자 onboarding |
 | **v0.7.0** | **Evaluation criteria override** 전용 파이프라인 (L1 eval_criteria_path 활용) | 도메인 특화 합격 기준 |
@@ -250,20 +250,25 @@ plugin 이 기본 제공한 agents/planner.md 를 완전 대체
 
 **수용 기준**: v0.2 설치에서도 fallback (BL default) 로 자연스럽게 렌더링 ✅ (bl_prefix default `BL` 로 동일 결과)
 
-### P3 — SessionStart hook 구현
+### P3 — SessionStart hook 구현 ✅ (v0.4.0 완료, 2026-04-20)
+
+> **상세 스펙**: [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md)
 
 **작업**:
-- [ ] `hooks/session-start.sh` 신규 작성 (~80줄)
-  - link-farm: `.harness/overrides/agents/*.md` → `.claude/agents/` 심볼릭 링크 (bash `ln -sf`)
-  - semver 검사: `plugin.json.version` vs `override-manifest.compatible_base_version`
-  - 경고 stdout 포맷 표준화
-- [ ] `plugin.json` 에 `"hooks": { "SessionStart": "hooks/session-start.sh" }` 추가
-- [ ] macOS + Linux bash 양쪽 테스트
+- [x] `hooks/session-start.sh` 신규 작성 (~160줄, bash 3.2 호환)
+  - link-farm: `.harness/overrides/agents/*.md` → `.claude/agents/` 심볼릭 링크 (`ln -sf`, Windows `cp` fallback)
+  - semver 검사: 간이 파서 (`~` `^` `=` 연산자 지원)
+  - jq 우선, 없으면 grep fallback
+  - fail-open 원칙 (override 없어도 silent 통과)
+- [x] `plugin.json` 에 `"hooks": { "SessionStart": "hooks/session-start.sh" }` 추가
+- [x] `docs/schemas/override-manifest.schema.json` 신규 (draft-07)
+- [x] 스모크 테스트 통과 — happy path / semver 불일치 / no-overrides 3 시나리오
 
 **수용 기준**:
-- override 파일 없을 때 무경고 무오작동 (fail-open)
-- override 파일 있을 때 `.claude/agents/` 에 심볼릭 링크 생성
-- 호환성 미충족 시 경고 출력 (블로킹 없음)
+- [x] override 파일 없을 때 무경고 무오작동 (fail-open) ✅
+- [x] override 파일 있을 때 `.claude/agents/` 에 심볼릭 링크 생성 ✅
+- [x] 호환성 미충족 시 경고 출력 (블로킹 없음) ✅
+- ⏳ 실제 Claude Code 세션에서 SessionStart hook 트리거 여부는 첫 런타임 검증 필요
 
 ### P4 — Starter templates
 
@@ -436,6 +441,7 @@ $EDITOR .harness/overrides/agents/planner.md
 | 2026-04-20 | **v1.0** | 최초 작성 — 3-레이어 아키텍처 + v0.3~v1.0 로드맵 + 7 리스크 + 6 PQG | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r2 | Executive Summary 에 "운영 모델 (1인 운영 · local-first)" 섹션 신설. §9.4 를 "Issue 라벨 컨벤션" → "개발 플로우 (로컬 우선)" 로 대체. §9.5 외부 adopter 시 거버넌스 전환 조건 신설. §6.2 KPI 를 Tier 1 (필수) / Tier 2 (외부 adopter 시) 로 분리 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r3 | **v0.3.0 릴리즈 반영** — §5 P1/P2 체크박스 완료 처리. §4 릴리즈 로드맵에서 v0.3.0 을 ✅ 완료로 기록, v0.4.0 을 L2+L3 번들로 재편 (P3 이관). [PHASE-P1-userConfig.md](./PHASE-P1-userConfig.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r4 | **v0.4.0 릴리즈 반영** — §5 P3 체크박스 완료. §4 v0.4.0 ✅. hooks/session-start.sh + override-manifest JSON Schema + [PHASE-P3-session-start-hook.md](./PHASE-P3-session-start-hook.md) 신규 생성 | @JangMinSeok (Claude-assisted) |
 
 ---
 

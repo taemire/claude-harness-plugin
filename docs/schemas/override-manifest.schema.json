@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/taemire/claude-harness-plugin/blob/main/docs/schemas/override-manifest.schema.json",
+  "title": "override-manifest.json — claude-harness-plugin L2/L3 레이어",
+  "description": "프로젝트 측 .harness/overrides/override-manifest.json 구조. hooks/session-start.sh 가 이 파일을 읽어 semver 호환성 검사 + link-farm 대상 문서화를 수행한다.",
+  "type": "object",
+  "required": ["schema_version", "compatible_base_version"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "이 override-manifest 스키마 버전. v0.4.0 기준 '1.0'"
+    },
+    "compatible_base_version": {
+      "type": "string",
+      "pattern": "^[~^=]?[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "호환 가능한 plugin 버전 (semver 연산자 지원: ~ ^ = 또는 생략). 예: '~0.4', '^0.3', '0.4.0'"
+    },
+    "overrides": {
+      "type": "array",
+      "description": "현재 override 중인 항목 목록 (문서화 목적, 선택)",
+      "items": {
+        "type": "object",
+        "required": ["type", "name"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["agent"],
+            "description": "override 대상 타입. v0.4 는 'agent' 만 지원"
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+            "description": "대상 파일 basename (확장자 제외, 예: 'planner')"
+          },
+          "reason": {
+            "type": "string",
+            "description": "override 사유 (선택, 문서화 목적)"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date",
+      "description": "override 생성 일자 (YYYY-MM-DD)"
+    },
+    "last_verified_base_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "마지막으로 호환성 확인한 plugin 버전 (예: '0.4.0')"
+    }
+  }
+}

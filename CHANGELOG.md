@@ -1,5 +1,27 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.4.0] — 2026-04-20
+
+### Added
+- **L2 Agent Replace 레이어 + L3 호환성 게이트 (P3 완료)**
+  - `hooks/session-start.sh` (~160줄, bash 3.2 호환) — 세션 시작 시 자동 실행
+    - [L2] link-farm: `${CLAUDE_PROJECT_DIR}/.harness/overrides/agents/*.md` → `${CLAUDE_PROJECT_DIR}/.claude/agents/` 심볼릭 링크 (Claude Code subagent 우선순위 3(.claude/agents) > 5(plugin agents) 활용). Windows 권한 부족 시 `cp` fallback
+    - [L3] semver 검사: `override-manifest.json.compatible_base_version` vs `plugin.json.version`. `~` `^` `=` 연산자 지원 (간이 파서). 불일치 시 경고 stdout (블로킹 없음)
+    - fail-open 원칙: override 파일 없거나 manifest 없어도 silent 통과
+    - 재실행 멱등 (symlink 재생성만 수행)
+    - jq 가용 시 우선 사용, 없으면 grep fallback
+  - `.claude-plugin/plugin.json` 에 `"hooks": { "SessionStart": "hooks/session-start.sh" }` 필드 신설
+  - `docs/schemas/override-manifest.schema.json` — JSON Schema draft-07 (schema_version / compatible_base_version / overrides[] / created_at / last_verified_base_version)
+- `docs/PHASE-P3-session-start-hook.md` — P3 상세 스펙 (흐름도 · semver 파서 · AC 7 · 리스크 6)
+
+### Changed
+- `docs/PLAN-v1.0.md`: §5 P3 체크박스 완료 + §4 v0.4.0 로드맵 ✅ 마킹 + Revision v1.0-r4
+
+### Notes
+- 스모크 테스트 통과: happy path (link-farm 생성) / semver 불일치 (경고 출력) / no-overrides (silent) 3 시나리오 검증
+- **첫 런타임 검증 필요**: Claude Code 실제 세션에서 SessionStart hook 이 트리거되는지 확인. 트리거 안 되면 대안 event (`UserPromptSubmit` 최초 1회) 로 폴백 설계 예정
+- 다음 릴리즈: P4 (Starter templates) 또는 `/harness:resume` 본체 구현 (BL-304 완료 의존)
+
 ## [0.3.0] — 2026-04-20
 
 ### Added
