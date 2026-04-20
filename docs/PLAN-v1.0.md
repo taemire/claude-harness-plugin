@@ -462,6 +462,7 @@ $EDITOR .harness/overrides/agents/planner.md
 | 2026-04-20 | v1.0-r6 | **v0.5.0 P1 v2 반영** — `.harness/config.yaml` 을 프로젝트 설정 1차 SSOT 로 격상. L0 config loader 추가, SKILL.md 치환을 `${user_config.*}` → `${HARNESS_*:-default}` 로 전환. §3.1 에 3단 cascade 추가. [PHASE-P1-v2-config-yaml.md](./PHASE-P1-v2-config-yaml.md) 신규 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r7 | **v0.6.0 P7 Multi-Session Hardening 신설** — §4 로드맵에서 v0.6 을 "Starter templates" → "Multi-Session Hardening" 으로 재배정. "Starter templates" 는 v0.7 로 이관. §5 에 P7 phase 추가. [PHASE-P7-multi-session-hardening.md](./PHASE-P7-multi-session-hardening.md) 신규. Portal Hub BL-306 실측 (HARNESS-MSC-001) 대응 | @JangMinSeok (Claude-assisted) |
 | 2026-04-20 | v1.0-r8 | **v0.7.0 P8 Starter templates 완료** — `templates/overrides-starter/` 6 파일 (README + config/manifest/eval_criteria + agents/planner+evaluator .example) + README §커스터마이징 가이드 + FAQ 4건. v0.8 을 "Evaluation criteria override + /harness:resume 본체" 로, v0.9 를 "Cross-project migration + Telemetry" 로 재편 | @JangMinSeok (Claude-assisted) |
+| 2026-04-20 | v1.0-r9 | **v0.7.1 patch — Task-ID prefix 일반화** — v0.6/v0.7 의 BL-ID 하드코딩 결함 3종 수정. `common/extract_bl_id.sh` 플러그인 SSOT 로 이관 + `HARNESS_BL_PREFIX` 기반 동적 regex. SKILL.md 0단계 "BL-ID" → "Task-ID" 용어 일반화 + "BL 없는 일감" 라우팅 가이드. Portal Hub 이외 프로젝트의 범용성 회복 | @JangMinSeok (Claude-assisted) |
 
 ---
 

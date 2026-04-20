@@ -1,5 +1,59 @@
 # CHANGELOG — claude-harness-plugin
 
+## [0.7.1] — 2026-04-20
+
+### Fixed — Task-ID prefix 일반화 (범용성 회복)
+
+v0.6/v0.7 의 BL-ID namespace 격리 구현이 Portal Hub convention (`BL-`) 에
+종속되어 있던 범용성 결함 수정. `HARNESS_BL_PREFIX` config 를 **실제로**
+적용 가능해짐.
+
+#### 발견된 결함 3가지
+1. `extract_bl_id.sh` 가 **플러그인에 없었음** — Portal Hub `.harness/common/`
+   에만 존재하여 다른 프로젝트에서 파일 부재로 SKILL 0단계 실패
+2. regex `BL-[0-9]+` 하드코딩 — `HARNESS_BL_PREFIX=TICKET` 설정해도
+   `TICKET-123` 감지 실패
+3. SKILL.md 0단계 문서 용어 "BL-ID" 고정 — 범용 컨셉은 "Task-ID"
+
+#### Changed
+- **`common/extract_bl_id.sh`** (신규 — 플러그인 SSOT 로 이관)
+  - `HARNESS_BL_PREFIX` env 기반 동적 regex 구성 (기본값 `BL`)
+  - A-Z0-9_ sanitize 후 uppercase 정규화
+  - fallback 도 prefix 포함: `<PREFIX>-UNKNOWN-YYYYMMDD-HHMM`
+  - Portal Hub 의 기존 `.harness/common/extract_bl_id.sh` 는 override 로
+    계속 동작 (skill 이 plugin root 먼저, project fallback 후)
+
+- `skills/run/SKILL.md` 0단계
+  - 용어: "BL-ID" → "Task-ID" (범용 개념)
+  - 변수: `BL_ID` → `TASK_ID`
+  - 경로 수정: 잘못된 `${CLAUDE_PLUGIN_ROOT}/.harness/common/` →
+    올바른 `${CLAUDE_PLUGIN_ROOT}/common/`
+  - "BL 없는 일감 처리" 섹션 신설 — fallback 도달 시 OMC executor/
+    deep-interview 권고 + 사용자 go/no-go 확인 절차
+  - 예시: `BL-307`, `TICKET-456`, `TASK-7`, `STORY-42` 다양한 prefix
+
+### Changed — BL 없는 자연어 요청 자동 처리 (OMC mission 스타일)
+
+사용자가 BL/이슈 번호 없이 자연어로 요청 (예: "로그인 폼 버그 수정") 해도
+하네스가 즉시 동작하도록 fallback 동작 개선. 경고/승인 대기 제거.
+
+- `common/extract_bl_id.sh` fallback: `<PREFIX>-UNKNOWN-*` → `<PREFIX>-AUTO-*`
+  - "UNKNOWN" 부정적 어감 제거, "자동 할당" 의도 명확화
+  - OMC autopilot 의 mission-state 자동 생성과 동일 패턴
+- `skills/run/SKILL.md` 0단계 "BL 없는 일감 처리" 섹션 재작성
+  - 이전: OMC executor/deep-interview 로 redirect + 사용자 go/no-go 확인
+  - 변경: Task-ID 자동 할당 + 한 줄 알림 + 파이프라인 그대로 진행
+  - 완료 후 실제 이슈 매핑 시 `git mv` 재명명 권고 (선택)
+
+이 변경으로 하네스는 "BL 이 있는 중대 작업 전용 도구" 에서 **"어떤 규모의
+작업도 수행 가능한 범용 파이프라인"** 으로 확장됨. 소규모 수정이면 여전히
+OMC executor 가 경제적이나, 사용자 판단에 맡김.
+
+### Notes
+- **Non-breaking patch** — Portal Hub 는 `bl_prefix: BL` 설정이라 동작 불변
+- 다른 프로젝트 (`bl_prefix: TICKET` 등) 에서 v0.7.1 부터 정상 작동
+- v0.6/v0.7 설치 사용자는 `/plugin update harness` 로 즉시 수혜
+
 ## [0.7.0] — 2026-04-20
 
 ### Added — Starter templates + 커스터마이징 가이드 (P8 완료)
