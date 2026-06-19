@@ -84,6 +84,13 @@ claude-harness-plugin/
 - `.claude-plugin/marketplace.json` 의 `metadata.version` 과 `plugins[0].version` 은 `plugin.json` 값을 따라 수동 동기화한다
 - 버전 bump 시 세 필드를 반드시 함께 갱신한다
 
+### `shared/` 공용 스킬의 독립 버전 정책
+
+- `shared/` 는 **플러그인에 의존하지 않는 자족형 벤더 중립 스킬**이다 (Claude·Codex·OpenCode·Pi 어디서나 단독 사용 가능; SessionStart hook/`${CLAUDE_PLUGIN_ROOT}` 비의존).
+- 따라서 `shared/VERSION` 은 **플러그인 버전(plugin.json SSOT)과 별개의 독립 트랙**으로 관리한다. 두 값이 달라도(예: 플러그인 `0.7.2` ↔ shared 스킬 `0.8.0`) 의도된 정상 상태다.
+- 플러그인 SSOT 3필드(위)와 `shared/VERSION` 을 강제로 일치시키지 않는다 — 공용 스킬은 플러그인 릴리즈 주기와 독립적으로 진화한다.
+- 단, 플러그인이 번들한 `shared/` 자산을 의미 있게 변경하는 릴리즈에서는 plugin.json SSOT 도 함께 bump 하는 것을 권장한다.
+
 ## 로드맵
 
 > **상세 플랜**: [docs/PLAN-v1.0.md](./docs/PLAN-v1.0.md) — 3-레이어 아키텍처 (userConfig 주입 · Agent Replace · 호환성 게이트) + v0.3~v1.0 릴리즈 로드맵 + 7 리스크 + 6 품질 게이트
