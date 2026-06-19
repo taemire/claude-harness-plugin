@@ -20,3 +20,6 @@ bun.lockb
 # Plugin dev artifacts (추후 빌드 도구 도입 시)
 dist/
 build/
+
+# 하네스 런타임/repro 산출물 (플러그인 repo 자체에선 추적 안 함)
+.harness/
